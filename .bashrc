@@ -19,6 +19,9 @@ shopt -s histappend
 HISTSIZE=1000
 HISTFILESIZE=2000
 
+# Save each command right after it executes
+PROMPT_COMMAND='history -a'
+
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
@@ -122,3 +125,4 @@ export PATH=$PATH:/home/keenan/Stuff/mallet-2.0.8/bin
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=/usr/local/cuda/include:$LD_LIBRARY_PATH
 export PATH=$PATH:/usr/local/go/bin
+
