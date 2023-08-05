@@ -72,9 +72,7 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
+. ~/Dev/utils/.bash_aliases
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -94,7 +92,7 @@ export LD_LIBRARY_PATH=/usr/local/cuda/include:$LD_LIBRARY_PATH
 export PATH=$PATH:/usr/local/go/bin
 
 # Where the actual PS1 variable is set
-source ~/.bash_ps1
+source ~/Dev/utils/.bash_ps1
 
 fortune
 

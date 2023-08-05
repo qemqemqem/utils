@@ -113,7 +113,7 @@ debug_trap() {
 # Need to put the \[ and \] symbols here rather than in a function
 
 export PS1='\[$(color_bg_blue)\]\t\[$(color_reset)\] $(command_status) '
-PS1+='\[$(color_bg_blue)\]◀$(virtual_env)▶\[$(color_bg_cyan)\] $(trim_path) '
+PS1+='\[$(color_bg_blue)\]$(virtual_env)\[$(color_bg_cyan)\] $(trim_path) '
 PS1+='\[$(color_bg_blue)\]$(number_of_files)f$(number_of_directories)d' # ≈\[$(color_bg_blue)\]$(directory_size)'
 PS1+='\[$(color_bg_green)\]$(parse_git_branch)'
 PS1+='\[$(color_bg_yellow)\]$(git_status)'
