@@ -1,0 +1,121 @@
+# Color functions
+color_bg_black() { echo -ne '\033[40;30m'; }
+color_bg_red() { echo -ne '\033[41;30m'; }
+color_bg_green() { echo -ne '\033[42;30m'; }
+color_bg_yellow() { echo -ne '\033[43;30m'; }
+color_bg_blue() { echo -ne '\033[44;30m'; }
+color_bg_magenta() { echo -ne '\033[45;30m'; }
+color_bg_cyan() { echo -ne '\033[46;30m'; }
+color_bg_white() { echo -ne '\033[47;30m'; }
+color_reset() { echo -ne '\033[00m'; }
+
+# Foreground color functions
+color_fg_black() { echo -ne '\033[30m'; }
+color_fg_red() { echo -ne '\033[31m'; }
+color_fg_green() { echo -ne '\033[32m'; }
+color_fg_yellow() { echo -ne '\033[33m'; }
+color_fg_blue() { echo -ne '\033[34m'; }
+color_fg_magenta() { echo -ne '\033[35m'; }
+color_fg_cyan() { echo -ne '\033[36m'; }
+color_fg_white() { echo -ne '\033[37m'; }
+
+# Function to display the last command exit status
+command_status() {
+  # Arrays of success and failure emojis
+  SUCCESS_EMOJIS=("🌱" "🌿" "🌳" "🌲" "🍀" "🌵" "🍃" "🌴" "🌾" "🍏" "🥦" "🥬")
+  FAILURE_EMOJIS=("🍂" "🍁" "🍄" "🌋" "🔥" "💥" "🧨" "🚫" "❌" "🛑" "📛" "🚨")
+
+  # Random index to choose an emoji
+  INDEX=$((RANDOM % ${#SUCCESS_EMOJIS[@]}))
+  local LAST_EXIT_CODE="$?"
+
+  if [ $LAST_EXIT_CODE -eq 0 ]; then
+    echo "${SUCCESS_EMOJIS[$INDEX]}"
+  else
+    echo "${FAILURE_EMOJIS[$INDEX]}"
+  fi
+}
+
+# Function to get the number of files in the current directory
+number_of_files() {
+  echo -n "$(find . -maxdepth 1 -type f | wc -l)"
+}
+
+number_of_directories() {
+  echo -n "$(find . -maxdepth 1 -type d ! -name '.' | wc -l)"
+}
+
+# Function to get the size of the current directory in GB
+directory_size() {
+  echo -n "$(du -sh . | cut -f1)B"
+}
+
+# Function to display the duration of the last command
+command_duration() {
+  echo -e "\033[45;30m$(($END_TIME - $START_TIME))s\033[00m"
+}
+
+# Function to display the current virtual environment
+virtual_env() {
+  if [ -n "$VIRTUAL_ENV" ]; then
+    echo -e "`basename \"$VIRTUAL_ENV\"`"
+  fi
+}
+
+parse_git_branch() {
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'
+}
+
+git_status() {
+  # Check if inside a Git repository
+  git rev-parse --is-inside-work-tree &>/dev/null || return
+
+  # Check for changes
+  local changed_files=$(git diff --name-only | wc -l)
+
+  # Count untracked files
+  local untracked_files=$(git ls-files --others --exclude-standard | wc -l)
+
+  # Count changed files staged (to be committed)
+  local staged_files=$(git diff --name-only --cached | wc -l)
+
+  if [ "$changed_files" -eq 0 ] && [ "$staged_files" -eq 0 ] && [ "$untracked_files" -eq 0 ]; then
+    echo -n "" # Repo is clean
+  else
+    # Display the number of staged files
+    [ "$staged_files" -ne 0 ] && echo -n "${staged_files}s"
+
+    # Display the number of changed files
+    [ "$changed_files" -ne 0 ] && echo -n "${changed_files}c"
+
+    # Display the number of untracked files
+    [ "$untracked_files" -ne 0 ] && echo -n "${untracked_files}u"
+  fi
+}
+
+trim_path() {
+  pwd | sed "s|^${HOME}/Dev/generally_intelligent|🤖|" | sed "s|^${HOME}|~|"
+}
+
+# Capture the start time of the command
+debug_trap() {
+  START_TIME=$SECONDS
+}
+
+# # Save the exit code and end time of the command
+# prompt_command() {
+#   LAST_EXIT_CODE=$?
+#   END_TIME=$SECONDS
+# }
+# trap 'debug_trap' DEBUG
+# PROMPT_COMMAND=prompt_command
+
+# Need to put the \[ and \] symbols here rather than in a function
+
+export PS1='\[$(color_bg_blue)\]\t\[$(color_reset)\] $(command_status) '
+PS1+='\[$(color_bg_blue)\]◀$(virtual_env)▶\[$(color_bg_cyan)\] $(trim_path) '
+PS1+='\[$(color_bg_blue)\]$(number_of_files)f$(number_of_directories)d' # ≈\[$(color_bg_blue)\]$(directory_size)'
+PS1+='\[$(color_bg_green)\]$(parse_git_branch)'
+PS1+='\[$(color_bg_yellow)\]$(git_status)'
+PS1+='\[$(color_reset)\] $ '
+
