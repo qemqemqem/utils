@@ -2,8 +2,8 @@
 
 # Handy commands for modifying this file
 alias bashupdate='source ~/.bashrc'
-alias bashedit='ne ~/.bash_aliases && bashupdate'
-alias bashrcedit='ne ~/.bashrc && bashupdate'
+alias bashedit='ne ~/Dev/utils/bash/.bash_aliases && bashupdate'
+alias bashrcedit='ne ~/Dev/utils/bash/.bashrc && bashupdate'
 
 alias gs="git status"
 alias gc="git commit -am"
