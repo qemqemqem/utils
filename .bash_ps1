@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Color functions
 color_bg_black() { echo -ne '\033[40;30m'; }
 color_bg_red() { echo -ne '\033[41;30m'; }
