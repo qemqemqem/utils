@@ -33,6 +33,10 @@ popd > /dev/null
 
 export PS1="VENV $OLD_PS1"
 
+function nb() {
+ssh notebook -t -- tmux new-session -A -s main
+}
+
 function lab() {
   gogen
 
@@ -59,8 +63,4 @@ function lab() {
   export PYTHONPATH="$PYTHONPATH:$GIMAINDIR/standalone/shovel"
 
   export PS1="$OLD_PS1"
-
-  function nb() {
-    ssh notebook -t -- tmux new-session -A -s main
-  }
 }
