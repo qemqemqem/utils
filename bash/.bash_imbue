@@ -1,0 +1,66 @@
+
+# Point to a convenient python
+alias gipython='/home/keenan/Dev/generally_intelligent/venv/bin/python3.9'
+
+# Per https://gitlab.com/generally-intelligent/generally_intelligent/-/blob/main/science/getting_started.md#6-test-connecting-to-your-controller
+if [[ "$(pwd)" == "/home/keenan/Dev/generally_intelligent" ]]; then
+	alias sshcontroller="$(gipython science/bin/science print_controller_ssh_command)"
+fi
+
+alias gogen="cd ~/Dev/generally_intelligent"
+
+alias controller="source ~/controller"
+alias controllertime='while true; do controller; sleep 5; done'
+
+alias runmypy="gogen && cd standalone/research && env PYTHONPATH=$PYTHONPATH:../../science:../../computronium:.. /home/keenan/Dev/generally_intelligent/venv/bin/pytest -s --tb no --disable-warnings research/common/test_types.py"
+
+alias sci="python science/bin/science"
+
+export OLD_PS1="$PS1"
+
+# Save the current directory
+pushd . > /dev/null
+gogen
+
+# activate your python virtual environment
+source ~/Dev/generally_intelligent/venv/bin/activate
+# set the environment variables for your controller
+source science/secrets/environment_vars/controller_vars.sh
+source science/secrets/environment_vars/bashenv.sh
+
+# Return to the original directory
+popd > /dev/null
+
+export PS1="VENV $OLD_PS1"
+
+function lab() {
+  gogen
+
+  # Don't change the prompt
+  export OLD_PS1="$PS1"
+
+  # activate your python virtual environment
+  source venv/bin/activate
+
+  # Set SCIENCE env
+  source science/secrets/environment_vars/controller_vars.sh
+  source science/secrets/environment_vars/bashenv.sh
+
+  # Setup a funky prompt
+  # export PS1='\[\033[01;34m\]$(trim_path) \[\033[01;32m\]$(parse_git_branch)\[\033[00m\]$ '
+
+  alias sci="python science/bin/science"
+
+  export PYTHONPATH="$PYTHONPATH:${DIR}"
+  export PYTHONPATH="$PYTHONPATH:$GIMAINDIR/computronium"
+  export PYTHONPATH="$PYTHONPATH:$GIMAINDIR/science"
+  export PYTHONPATH="$PYTHONPATH:$GIMAINDIR/bones"
+  export PYTHONPATH="$PYTHONPATH:$GIMAINDIR/standalone"
+  export PYTHONPATH="$PYTHONPATH:$GIMAINDIR/standalone/shovel"
+
+  export PS1="$OLD_PS1"
+
+  function nb() {
+    ssh notebook -t -- tmux new-session -A -s main
+  }
+}

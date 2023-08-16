@@ -78,9 +78,15 @@ git_status() {
   # Count untracked files
   local untracked_files=$(git ls-files --others --exclude-standard | wc -l)
 
-  if [ "$changed_files" -eq 0 ] && [ "$untracked_files" -eq 0 ]; then
+  # Count changed files staged (to be committed)
+  local staged_files=$(git diff --name-only --cached | wc -l)
+
+  if [ "$changed_files" -eq 0 ] && [ "$staged_files" -eq 0 ] && [ "$untracked_files" -eq 0 ]; then
     echo -n "" # Repo is clean
   else
+    # Display the number of staged files
+    [ "$staged_files" -ne 0 ] && echo -n "${staged_files}s"
+
     # Display the number of changed files
     [ "$changed_files" -ne 0 ] && echo -n "${changed_files}c"
 
@@ -90,7 +96,7 @@ git_status() {
 }
 
 trim_path() {
-  pwd | sed "s|^${HOME}/Dev/generally_intelligent|🤖|"
+  pwd | sed "s|^${HOME}/Dev/generally_intelligent|🤖|" | sed "s|^${HOME}|🏠|"
 }
 
 # Capture the start time of the command
@@ -103,7 +109,6 @@ debug_trap() {
 #   LAST_EXIT_CODE=$?
 #   END_TIME=$SECONDS
 # }
-
 # trap 'debug_trap' DEBUG
 # PROMPT_COMMAND=prompt_command
 
