@@ -37,6 +37,8 @@ function nb() {
   ssh notebook -t -- tmux new-session -A -s main
 }
 
+alias nbp="~/Dev/for_notebook/install.sh && nb"
+
 function lab() {
   gogen
 
