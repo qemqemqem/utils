@@ -86,4 +86,4 @@ source ~/Dev/utils/bash/.bash_ps1
 # Print out a funny message
 # fortune
 #echo "~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~"
-echo "Updated!"
+echo "Hey!"
