@@ -31,7 +31,7 @@ alias recentchanges="git log -n 5 --no-merge --name-only --pretty=format: | sort
 # Explanation https://chat.openai.com/share/e551dfb1-978e-46be-a9db-0aa9c4fb07ec
 
 # Store all my commands in a history file, one per day
-export PROMPT_COMMAND='if [ "$(id -u)" -ne 0 ]; then touch "${HOME}/.logs/bash-history-$(date "+%Y-%m-%d").log"; echo "$(date "+%H:%M") | $(pwd) | $(cut -c 8- <<< "$(history 1)")" >> "${HOME}/.logs/bash-history-$(date "+%Y-%m-%d").log"; fi'
+export PROMPT_COMMAND='if [ "$(id -u)" -ne 0 ]; then touch "${HOME}/.logs/bash-history-$(date "+%Y-%m-%d").log"; echo "$(date "+%H:%M") | $(pwd | sed "s|^${HOME}|~|") | $(cut -c 8- <<< "$(history 1)")" >> "${HOME}/.logs/bash-history-$(date "+%Y-%m-%d").log"; fi'
 
 # To use this function, you'd call `histview bash-history-YYYY-MM-DD.log` to view the logged commands for the specified date.
 histview() {

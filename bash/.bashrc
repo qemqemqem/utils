@@ -84,5 +84,6 @@ source ~/Dev/utils/bash/.bash_imbue
 source ~/Dev/utils/bash/.bash_ps1
 
 # Print out a funny message
-fortune
-echo "~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~"
+# fortune
+#echo "~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~"
+echo "Updated!"
