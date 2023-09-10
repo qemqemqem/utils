@@ -90,3 +90,4 @@ called() {
   fi
 }
 
+alias mse="wine /home/keenan/Installs/M15-Magic-Pack-main/mse.exe"

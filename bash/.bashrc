@@ -78,7 +78,7 @@ export PATH=$PATH:/usr/local/go/bin
 source ~/Dev/utils/bash/.bash_aliases
 
 # Imbue specific stuff
-source ~/Dev/utils/bash/.bash_imbue
+# source ~/Dev/utils/bash/.bash_imbue
 
 # Where the actual PS1 variable is set
 source ~/Dev/utils/bash/.bash_ps1
