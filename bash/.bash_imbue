@@ -1,6 +1,6 @@
 
 # Point to a convenient python
-alias gipython='/home/keenan/Dev/generally_intelligent/venv/bin/python3.9'
+alias gipython='/home/keenan/Dev/generally_intelligent/venv/bin/python3.11'
 
 # Per https://gitlab.com/generally-intelligent/generally_intelligent/-/blob/main/science/getting_started.md#6-test-connecting-to-your-controller
 if [[ "$(pwd)" == "/home/keenan/Dev/generally_intelligent" ]]; then
@@ -21,6 +21,8 @@ export OLD_PS1="$PS1"
 # Save the current directory
 pushd . > /dev/null
 gogen
+
+source science/secrets/environment_vars/controller_vars.sh
 
 # activate your python virtual environment
 source ~/Dev/generally_intelligent/venv/bin/activate
