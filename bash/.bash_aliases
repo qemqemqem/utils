@@ -14,6 +14,7 @@ alias lr='ls -R | grep ":$" | sed -e '\''s/:$//'\'' -e '\''s/[^-][^\/]*\//--/g'\
 # some more ls aliases
 alias ll='ls -alF'
 alias la='ls -A'
+alias godev='cd ~/Dev'
 
 # Git
 alias gitmain="git checkout main"
@@ -25,6 +26,9 @@ alias commit="git commit -am"
 alias gp="git pull"
 alias gd="git diff"
 alias recentchanges="git log -n 5 --no-merge --name-only --pretty=format: | sort | uniq"
+
+# KDE
+alias fixkwin="DISPLAY=:0 kwin --replace &"
 
 # HISTORY STUFF
 # Taken from Matthew's bashrc at https://gitlab.com/generally-intelligent/generally_intelligent/-/snippets/2584437

@@ -23,13 +23,15 @@ color_fg_white() { echo -ne '\033[37m'; }
 
 # Function to display the last command exit status
 command_status() {
+  # Otherwise it gets overridden
+  LAST_EXIT_CODE="$1"
+
   # Arrays of success and failure emojis
   SUCCESS_EMOJIS=("🌱" "🌿" "🌳" "🌲" "🍀" "🌵" "🍃" "🌴" "🌾" "🍏" "🥦" "🥬")
   FAILURE_EMOJIS=("🍂" "🍁" "🍄" "🌋" "🔥" "💥" "🧨" "🚫" "❌" "🛑" "📛" "🚨")
 
   # Random index to choose an emoji
   INDEX=$((RANDOM % ${#SUCCESS_EMOJIS[@]}))
-  local LAST_EXIT_CODE="$?"
 
   if [ $LAST_EXIT_CODE -eq 0 ]; then
     echo "${SUCCESS_EMOJIS[$INDEX]}"
@@ -114,7 +116,9 @@ debug_trap() {
 
 # Need to put the \[ and \] symbols here rather than in a function
 
-export PS1='\[$(color_bg_blue)\]\t\[$(color_reset)\] $(command_status) '
+PROMPT_COMMAND="EXIT_CODE=\$?; ${PROMPT_COMMAND:+$PROMPT_COMMAND; }"
+
+export PS1='\[$(color_bg_blue)\]\t\[$(color_reset)\] $(command_status $EXIT_CODE) '
 PS1+='\[$(color_bg_blue)\]◀$(virtual_env)▶\[$(color_bg_cyan)\] $(trim_path) '
 PS1+='\[$(color_bg_blue)\]$(number_of_files)f$(number_of_directories)d' # ≈\[$(color_bg_blue)\]$(directory_size)'
 PS1+='\[$(color_bg_green)\]$(parse_git_branch)'

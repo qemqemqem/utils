@@ -74,6 +74,13 @@ export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=/usr/local/cuda/include:$LD_LIBRARY_PATH
 export PATH=$PATH:/usr/local/go/bin
 
+# Blesh
+# https://github.com/akinomyoga/ble.sh
+source ~/.local/share/blesh/ble.sh
+# source /etc/profile.d/bash_completion.sh
+# ble-import -d integration/fzf-completion
+# ble-import -d integration/fzf-key-bindings
+
 # Alias definitions.
 source ~/Dev/utils/bash/.bash_aliases
 
