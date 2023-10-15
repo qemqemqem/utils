@@ -27,7 +27,8 @@ alias gd="git diff"
 alias recentchanges="git log -n 5 --no-merge --name-only --pretty=format: | sort | uniq"
 
 # LOL
-alias art='find Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} jp2a --colors {}'
+# alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} jp2a --colors {}'
+alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} catimg {}'
 alias growtree='cbonsai -l'
 
 # HISTORY STUFF
