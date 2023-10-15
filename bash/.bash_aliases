@@ -26,6 +26,10 @@ alias gp="git pull"
 alias gd="git diff"
 alias recentchanges="git log -n 5 --no-merge --name-only --pretty=format: | sort | uniq"
 
+# LOL
+alias art='find Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} jp2a --colors {}'
+alias growtree='cbonsai -l'
+
 # HISTORY STUFF
 # Taken from Matthew's bashrc at https://gitlab.com/generally-intelligent/generally_intelligent/-/snippets/2584437
 # It originally comes from https://spin.atomicobject.com/2016/05/28/log-bash-history/ and https://news.ycombinator.com/item?id=11806553, but has been extended over time.
@@ -91,3 +95,5 @@ called() {
 }
 
 alias mse="wine /home/keenan/Installs/M15-Magic-Pack-main/mse.exe"
+
+alias godev="cd ~/Dev"
