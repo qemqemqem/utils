@@ -15,6 +15,9 @@ alias lr='ls -R | grep ":$" | sed -e '\''s/:$//'\'' -e '\''s/[^-][^\/]*\//--/g'\
 alias ll='ls -alF'
 alias la='ls -A'
 
+# Apt
+alias get="sudo apt install -y"
+
 # Git
 alias gitmain="git checkout main"
 alias gs="git status"
