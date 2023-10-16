@@ -2,7 +2,14 @@
 
 source ~/Dev/private_keys.sh
 
-QUERY="$1"
+# Check if a command-line argument is provided
+if [ "$#" -eq 1 ]; then
+    QUERY="$1"
+else
+    # Read from stdin
+    QUERY=$(cat)
+    echo "Got input $QUERY"
+fi
 
 # Fetch the image URLs from the Google Custom Search JSON API
 ENCODED_QUERY=$(urlencode "$QUERY")
@@ -22,6 +29,8 @@ fi
 IMAGE_URL=$(echo "$RESULTS" | grep -oP 'https://[^"]+\.(png|jpg)' | head -1)
 
 if [ -z "$IMAGE_URL" ]; then
+    echo "https://www.googleapis.com/customsearch/v1?q=$ENCODED_QUERY&key=$CUSTOM_SEARCH_API_KEY&cx=$CUSTOM_GOOGLE_SEARCH_ENGINE_ID&searchType=image"
+    echo "$RESULTS"
     echo "No suitable image found."
     exit 1
 fi
