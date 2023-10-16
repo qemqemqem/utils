@@ -34,6 +34,7 @@ alias recentchanges="git log -n 5 --no-merge --name-only --pretty=format: | sort
 alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} catimg {}'
 alias growtree='cbonsai -l'
 alias drawurl='drawurl_func() { curl -s "$1" | catimg -; }; drawurl_func'
+alias drawtext='bash ~/Dev/utils/bash/drawtext.sh'
 
 # HISTORY STUFF
 # Taken from Matthew's bashrc at https://gitlab.com/generally-intelligent/generally_intelligent/-/snippets/2584437
