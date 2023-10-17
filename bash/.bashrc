@@ -1,3 +1,6 @@
+# Private keys
+source ~/Dev/private_keys.sh
+
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -74,12 +77,14 @@ export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=/usr/local/cuda/include:$LD_LIBRARY_PATH
 export PATH=$PATH:/usr/local/go/bin
 
-# Blesh
+# Ble.sh
 # https://github.com/akinomyoga/ble.sh
+# source ~/Installs/ble.sh/out/ble.sh
 source ~/.local/share/blesh/ble.sh
-# source /etc/profile.d/bash_completion.sh
-# ble-import -d integration/fzf-completion
-# ble-import -d integration/fzf-key-bindings
+bleopt prompt_eol_mark='⏎'
+# Per https://github.com/akinomyoga/ble.sh#28-fzf-integration
+ble-import -d integration/fzf-completion
+ble-import -d integration/fzf-key-bindings
 
 # Alias definitions.
 source ~/Dev/utils/bash/.bash_aliases
@@ -94,3 +99,5 @@ source ~/Dev/utils/bash/.bash_ps1
 # fortune
 #echo "~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~"
 echo "Hey!"
+neofetch
+art

@@ -1,7 +1,9 @@
 import os
 import re
 import time
+from concurrent.futures import ThreadPoolExecutor
 
+import attr
 import openai
 from joblib import Memory
 
@@ -79,3 +81,31 @@ def prompt_completion_chat(question="", model="gpt-3.5-turbo", n=1, temperature=
     if n == 1:
         return answers[0]
     raise NotImplementedError("TODO: Return multiple answers")
+
+
+@attr.s(auto_attribs=True)
+class MultiThreadPrompting:
+    max_num_threads: int = 10
+    _executor: ThreadPoolExecutor = attr.ib(init=False, factory=lambda: None)
+
+    def __attrs_post_init__(self):
+        self._executor = ThreadPoolExecutor(max_workers=self.max_num_threads)
+
+    def threaded_prompt_completion_chat(self, callback, *args, **kwargs):
+        def wrapper():
+            result = prompt_completion_chat(*args, **kwargs)
+            callback(result)
+        future = self._executor.submit(wrapper)
+
+        # Uncomment the following line if you want to ensure that the task has completed.
+        # future.result()
+
+if __name__ == "__main__":
+    # Callback function to be called once foo is done
+    def my_callback(result):
+        print("Result of foo:", result)
+
+    mtp = MultiThreadPrompting(max_num_threads=5)
+
+    for i in range(10):
+        mtp.threaded_prompt_completion_chat(my_callback, i, i+1)

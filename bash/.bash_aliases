@@ -16,6 +16,9 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias godev='cd ~/Dev'
 
+# Apt
+alias get="sudo apt install -y"
+
 # Git
 alias gitmain="git checkout main"
 alias gs="git status"
@@ -29,6 +32,13 @@ alias recentchanges="git log -n 5 --no-merge --name-only --pretty=format: | sort
 
 # KDE
 alias fixkwin="DISPLAY=:0 kwin --replace &"
+
+# LOL
+# alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} jp2a --colors {}'
+alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} catimg {}'
+alias growtree='cbonsai -l'
+alias drawurl='drawurl_func() { curl -s "$1" | catimg -; }; drawurl_func'
+alias drawtext='bash ~/Dev/utils/bash/drawtext.sh'
 
 # HISTORY STUFF
 # Taken from Matthew's bashrc at https://gitlab.com/generally-intelligent/generally_intelligent/-/snippets/2584437
@@ -94,3 +104,6 @@ called() {
   fi
 }
 
+alias mse="wine /home/keenan/Installs/M15-Magic-Pack-main/mse.exe"
+
+alias godev="cd ~/Dev"
