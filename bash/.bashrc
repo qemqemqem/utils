@@ -83,8 +83,8 @@ export PATH=$PATH:/usr/local/go/bin
 source ~/.local/share/blesh/ble.sh
 bleopt prompt_eol_mark='⏎'
 # Per https://github.com/akinomyoga/ble.sh#28-fzf-integration
-ble-import -d integration/fzf-completion
-ble-import -d integration/fzf-key-bindings
+# ble-import -d integration/fzf-completion
+# ble-import -d integration/fzf-key-bindings
 
 # Alias definitions.
 source ~/Dev/utils/bash/.bash_aliases
