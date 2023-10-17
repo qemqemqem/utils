@@ -1,15 +1,11 @@
+# sudo tailscale up
 
 # Point to a convenient python
 alias gipython='/home/keenan/Dev/generally_intelligent/venv/bin/python3.11'
 
-# Per https://gitlab.com/generally-intelligent/generally_intelligent/-/blob/main/science/getting_started.md#6-test-connecting-to-your-controller
-if [[ "$(pwd)" == "/home/keenan/Dev/generally_intelligent" ]]; then
-	alias sshcontroller="$(gipython science/bin/science print_controller_ssh_command)"
-fi
-
 alias gogen="cd ~/Dev/generally_intelligent"
 
-alias controller="source ~/controller"
+alias controller="sudo tailscale up; source ~/controller"
 alias controllertime='while true; do controller; sleep 5; done'
 
 alias runmypy="gogen && cd standalone/research && env PYTHONPATH=$PYTHONPATH:../../science:../../computronium:.. /home/keenan/Dev/generally_intelligent/venv/bin/pytest -s --tb no --disable-warnings research/common/test_types.py"
@@ -29,6 +25,11 @@ source ~/Dev/generally_intelligent/venv/bin/activate
 # set the environment variables for your controller
 source science/secrets/environment_vars/controller_vars.sh
 source science/secrets/environment_vars/bashenv.sh
+
+# Per https://gitlab.com/generally-intelligent/generally_intelligent/-/blob/main/science/getting_started.md#6-test-connecting-to-your-controller
+if [[ "$(pwd)" == "/home/keenan/Dev/generally_intelligent" ]]; then
+	alias sshcontroller="$(gipython science/bin/science print_controller_ssh_command)"
+fi
 
 # Return to the original directory
 popd > /dev/null
