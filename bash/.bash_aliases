@@ -32,7 +32,7 @@ alias gd="git diff"
 alias recentchanges="git log -n 5 --no-merge --name-only --pretty=format: | sort | uniq"
 alias gdiff="git diff --color | ~/Installs/diff-so-fancy/diff-so-fancy"
 # alias glog='git log -n 20 --pretty=format:"%h -- %an, %ar -- %s" --reverse'
-alias glog='git log --oneline --graph --decorate --all --since="1 week ago" -n 20'
+alias glog='git log --oneline --graph --decorate --all -n 20'
 
 # KDE
 alias fixkwin="DISPLAY=:0 kwin --replace &"
