@@ -19,8 +19,8 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=10000
+HISTFILESIZE=20000
 
 # Save each command right after it executes
 PROMPT_COMMAND='history -a'
@@ -99,5 +99,5 @@ source ~/Dev/utils/bash/.bash_ps1
 # fortune
 #echo "~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~"
 echo "Hey!"
-neofetch
-art
+# neofetch
+# art

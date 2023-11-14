@@ -2,8 +2,8 @@
 
 # Handy commands for modifying this file
 alias bashupdate='source ~/.bashrc'
-alias bashedit='ne ~/Dev/utils/bash/.bash_aliases && bashupdate'
-alias bashrcedit='ne ~/Dev/utils/bash/.bashrc && bashupdate'
+alias bashedit='tilde ~/Dev/utils/bash/.bash_aliases && bashupdate'
+alias bashrcedit='tilde ~/Dev/utils/bash/.bashrc && bashupdate'
 
 alias gs="git status"
 alias gc="git commit -am"
@@ -15,13 +15,14 @@ alias lr='ls -R | grep ":$" | sed -e '\''s/:$//'\'' -e '\''s/[^-][^\/]*\//--/g'\
 alias ll='ls -alF'
 alias la='ls -A'
 alias godev='cd ~/Dev'
+alias histf='history | fzf'
 
 # Apt
 alias get="sudo apt install -y"
 
 # Git
 alias gitmain="git checkout main"
-alias gs="git status"
+alias gs="git status && git diff --stat"
 alias push="git push -u origin"
 alias checkout="git checkout"
 alias ga="git add -A"
@@ -29,9 +30,17 @@ alias commit="git commit -am"
 alias gp="git pull"
 alias gd="git diff"
 alias recentchanges="git log -n 5 --no-merge --name-only --pretty=format: | sort | uniq"
+alias gdiff="git diff --color | ~/Installs/diff-so-fancy/diff-so-fancy"
+# alias glog='git log -n 20 --pretty=format:"%h -- %an, %ar -- %s" --reverse'
+alias glog='git log --oneline --graph --decorate --all --since="1 week ago" -n 20'
 
 # KDE
 alias fixkwin="DISPLAY=:0 kwin --replace &"
+
+# Tools
+alias bat='batcat'
+alias cat='bat'
+# alias grep='rg'
 
 # LOL
 # alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} jp2a --colors {}'
@@ -107,3 +116,21 @@ called() {
 alias mse="wine /home/keenan/Installs/M15-Magic-Pack-main/mse.exe"
 
 alias godev="cd ~/Dev"
+
+# Git colors
+git config --global color.ui true
+git config --global color.diff-highlight.oldNormal    "red bold"
+git config --global color.diff-highlight.oldHighlight "red bold 52"
+git config --global color.diff-highlight.newNormal    "green bold"
+git config --global color.diff-highlight.newHighlight "green bold 22"
+git config --global color.diff.meta       "11"
+git config --global color.diff.frag       "magenta bold"
+git config --global color.diff.func       "146 bold"
+git config --global color.diff.commit     "yellow bold"
+git config --global color.diff.old        "red bold"
+git config --global color.diff.new        "green bold"
+git config --global color.diff.whitespace "red reverse"
+
+runlast() {
+    $1 $(fc -ln -2 | awk '{print $NF}')
+}
