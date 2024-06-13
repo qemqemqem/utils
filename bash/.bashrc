@@ -86,6 +86,9 @@ bleopt prompt_eol_mark='⏎'
 # ble-import -d integration/fzf-completion
 # ble-import -d integration/fzf-key-bindings
 
+# Atuin with Ble.sh
+eval "$(atuin init bash)"
+
 # Alias definitions.
 source ~/Dev/utils/bash/.bash_aliases
 

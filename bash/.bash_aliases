@@ -12,9 +12,12 @@ alias gc="git commit -am"
 # lr:  Full Recursive Directory Listing
 alias lr='ls -R | grep ":$" | sed -e '\''s/:$//'\'' -e '\''s/[^-][^\/]*\//--/g'\'' -e '\''s/^/   /'\'' -e '\''s/-/|/'\'' | less'
 # some more ls aliases
-alias ll='ls -alF'
+alias ll='ls -alFh'
+alias llt='ll -t'
 alias la='ls -A'
 alias godev='cd ~/Dev'
+alias gohome='cd ~'
+alias godown='cd ~/Downloads'
 alias histf='history | fzf'
 
 # Apt
@@ -33,11 +36,14 @@ alias recentchanges="git log -n 5 --no-merge --name-only --pretty=format: | sort
 alias gdiff="git diff --color | ~/Installs/diff-so-fancy/diff-so-fancy"
 # alias glog='git log -n 20 --pretty=format:"%h -- %an, %ar -- %s" --reverse'
 alias glog='git log --oneline --graph --decorate --all -n 20'
+alias gitrecent='git for-each-ref --sort=committerdate refs/heads/ --format="%(committerdate:short) %(refname:short)"'
+alias githistory='git log -n 20 --pretty=format:"%C(yellow)%h%C(reset) - %C(green)%s%C(reset)" --name-only --reverse'
 
 # KDE
 alias fixkwin="DISPLAY=:0 kwin --replace &"
 
 # Tools
+alias catcat='cat'
 alias bat='batcat'
 alias cat='bat'
 # alias grep='rg'
