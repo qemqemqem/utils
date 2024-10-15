@@ -5,6 +5,11 @@ from concurrent.futures import ThreadPoolExecutor
 
 import attr
 import openai
+from joblib import Memory
+
+memory = Memory("cache_folder", verbose=0)
+# memory.clear(warn=False)  # Warning: Uncommenting this will bust the cache
+
 
 # Set up your OpenAI API key
 openai.api_key = os.environ["OPENAI_API_KEY"]
@@ -47,7 +52,8 @@ def prompt_completion(question, engine="davinci-instruct-beta", max_tokens=64, t
     return answer
 
 
-def prompt_completion_chat(question="", model="gpt-3.5-turbo", n=1, temperature=0.0, max_tokens=256, system_description="You are a humorous assistant that writes descriptions for a fantasy game. You like to include jokes in your responses, but you also love fantasy world-building.", messages=None):
+@memory.cache
+def prompt_completion_chat(question="", model="gpt-3.5-turbo", n=1, temperature=0.2, max_tokens=256, system_description="You are a helpful assistant.", messages=None) -> str:
     start_time = time.perf_counter()
     prompt = f"{question} "
     response = openai.ChatCompletion.create(
@@ -70,10 +76,11 @@ def prompt_completion_chat(question="", model="gpt-3.5-turbo", n=1, temperature=
         answers.append(ans)
     # print(f"\tPROMPT: {question}\n\tANSWER: {answer}\n")
     duration = time.perf_counter() - start_time
-    print(f"Duration: {duration:.2f} seconds: {answers[0][:20]}")
+    short_answer = answers[0][:20].replace('\n', ' ')
+    print(f"Duration: {duration:.2f} seconds: {short_answer}...")
     if n == 1:
         return answers[0]
-    return
+    raise NotImplementedError("TODO: Return multiple answers")
 
 
 @attr.s(auto_attribs=True)

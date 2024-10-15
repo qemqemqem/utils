@@ -1,20 +1,27 @@
+# sudo tailscale up
 
 # Point to a convenient python
-alias gipython='/home/keenan/Dev/generally_intelligent/venv/bin/python3.9'
-
-# Per https://gitlab.com/generally-intelligent/generally_intelligent/-/blob/main/science/getting_started.md#6-test-connecting-to-your-controller
-if [[ "$(pwd)" == "/home/keenan/Dev/generally_intelligent" ]]; then
-	alias sshcontroller="$(gipython science/bin/science print_controller_ssh_command)"
-fi
+alias gipython='/home/keenan/Dev/generally_intelligent/venv/bin/python3.11'
 
 alias gogen="cd ~/Dev/generally_intelligent"
+alias goquar="gogen && cd standalone/llms/llms/quarantine/andrew/"
 
+export GI_ROOT="/home/keenan/Dev/generally_intelligent"
+
+# alias controller="sudo tailscale up; source ~/controller"
 alias controller="source ~/controller"
 alias controllertime='while true; do controller; sleep 5; done'
+
+alias pretty='python ~/Dev/generally_intelligent/scripts/pprint_problems.py -l'
+alias pretty1='pretty -r -n 1'
 
 alias runmypy="gogen && cd standalone/research && env PYTHONPATH=$PYTHONPATH:../../science:../../computronium:.. /home/keenan/Dev/generally_intelligent/venv/bin/pytest -s --tb no --disable-warnings research/common/test_types.py"
 
 alias sci="python science/bin/science"
+
+alias iceicebaby='cd ~/.ice/generations && cd "$(ls -ltp | grep '\''^d'\'' | head -1 | sed '\''s/.*[0-9][0-9]:[0-9][0-9] //'\'')" && llt && echo "Try typing cat *_output.txt"'
+
+alias syncme="gogen && rsync -avzR --include='.git/' --include='.git/HEAD' --include='.git/refs' --include='.git/refs/heads/' --include='.git/refs/heads/*' --exclude='.git/*' --filter=':- .gitignore' -e 'ssh' ./ user@notebook:/opt/projects/generally_intelligent"
 
 export OLD_PS1="$PS1"
 
@@ -22,11 +29,18 @@ export OLD_PS1="$PS1"
 pushd . > /dev/null
 gogen
 
+source science/secrets/environment_vars/controller_vars.sh
+
 # activate your python virtual environment
 source ~/Dev/generally_intelligent/venv/bin/activate
 # set the environment variables for your controller
 source science/secrets/environment_vars/controller_vars.sh
 source science/secrets/environment_vars/bashenv.sh
+
+# Per https://gitlab.com/generally-intelligent/generally_intelligent/-/blob/main/science/getting_started.md#6-test-connecting-to-your-controller
+if [[ "$(pwd)" == "/home/keenan/Dev/generally_intelligent" ]]; then
+	alias sshcontroller="$(gipython science/bin/science print_controller_ssh_command)"
+fi
 
 # Return to the original directory
 popd > /dev/null
@@ -66,3 +80,20 @@ function lab() {
 
   export PS1="$OLD_PS1"
 }
+
+# Set the PYTHONPATH
+source ~/Dev/imbue_scripts/python_path.sh
+
+# For the Hammers
+export PYTEST_CURRENT_TEST=True
+export DEFAULT_MAX_HAMMER_DOLLARS=100
+
+# Locations
+alias gombpp="cd /home/keenan/Dev/generally_intelligent/standalone/llms/llms/quarantine/andrew/extend_mbpp"
+alias goandrew="cd /home/keenan/Dev/generally_intelligent/standalone/llms/llms/quarantine/andrew"
+
+# Secrets
+gogen
+source science/secrets/environment_vars/controller_vars.sh
+source science/secrets/environment_vars/bashenv.sh
+gohome

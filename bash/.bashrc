@@ -19,8 +19,8 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=100000
+HISTFILESIZE=200000
 
 # Save each command right after it executes
 PROMPT_COMMAND='history -a'
@@ -85,6 +85,9 @@ bleopt prompt_eol_mark='⏎'
 ble-import -d integration/fzf-completion
 ble-import -d integration/fzf-key-bindings
 
+# Atuin with Ble.sh
+eval "$(atuin init bash)"
+
 # Alias definitions.
 source ~/Dev/utils/bash/.bash_aliases
 
@@ -102,4 +105,4 @@ neofetch
 art
 
 # Starship
-# eval "$(starship init bash)" 
+# eval "$(starship init bash)"
