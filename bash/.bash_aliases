@@ -12,11 +12,13 @@ alias gc="git commit -am"
 # lr:  Full Recursive Directory Listing
 alias lr='ls -R | grep ":$" | sed -e '\''s/:$//'\'' -e '\''s/[^-][^\/]*\//--/g'\'' -e '\''s/^/   /'\'' -e '\''s/-/|/'\'' | less'
 # some more ls aliases
-alias ll='ls -alF'
+alias ll='ls -alhF'
 alias la='ls -A'
 
 # Apt
 alias get="sudo apt install -y"
+alias gohome="cd ~"
+alias godown="cd ~/Downloads"
 
 # Git
 alias gitmain="git checkout main"
@@ -28,6 +30,7 @@ alias commit="git commit -am"
 alias gp="git pull"
 alias gd="git diff"
 alias recentchanges="git log -n 5 --no-merge --name-only --pretty=format: | sort | uniq"
+alias gitaddall="git add -A"
 
 # LOL
 # alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} jp2a --colors {}'
@@ -35,6 +38,10 @@ alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 
 alias growtree='cbonsai -l'
 alias drawurl='drawurl_func() { curl -s "$1" | catimg -; }; drawurl_func'
 alias drawtext='bash ~/Dev/utils/bash/drawtext.sh'
+
+# Tools
+alias bat='batcat'
+alias pingo='ping 8.8.8.8'
 
 # HISTORY STUFF
 # Taken from Matthew's bashrc at https://gitlab.com/generally-intelligent/generally_intelligent/-/snippets/2584437
@@ -103,3 +110,114 @@ called() {
 alias mse="wine /home/keenan/Installs/M15-Magic-Pack-main/mse.exe"
 
 alias godev="cd ~/Dev"
+
+#and() {
+#    local command="$*"
+#     eval "${command// and / && }"
+#}
+#alias and='eval "$(echo "$*" | sed "s/ and / && /g")"'
+
+wh() {
+    # Default settings
+    local max_depth=5
+    local count_threshold=40
+    local show_hidden=false
+    local size_sort=false
+    local force_depth=""
+    local full_depth=false
+
+    # Parse options
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -d|--depth)
+                force_depth="$2"
+                shift 2
+                ;;
+            -c|--count)
+                count_threshold="$2"
+                shift 2
+                ;;
+            -a|--all)
+                show_hidden=true
+                shift
+                ;;
+            -s|--sort)
+                size_sort=true
+                shift
+                ;;
+            -f|--full)
+                full_depth=true
+                count_threshold=1000000
+                shift
+                ;;
+            -h|--help)
+                echo "Usage: whatshere [-d|--depth depth] [-c|--count count_threshold] [-a|--all] [-h|--help] [-s|--sort] [directory]"
+                echo "  -d, --depth depth: Force a specific depth"
+                echo "  -c, --count count: Set the count threshold (default: 1000)"
+                echo "  -a, --all: Show hidden files"
+                echo "  -h, --help: Show this help message"
+                echo "  -s, --sort: Sort by size (largest first)"
+                return 0
+                ;;
+            *)
+                dir="$1"
+                shift
+                ;;
+        esac
+    done
+
+    # Get the directory to analyze (current directory if not specified)
+    dir="${dir:-.}"
+
+    # Function to count items at a specific depth
+    count_at_depth() {
+        local depth=$1
+        local count_cmd
+
+        if $show_hidden; then
+            count_cmd="find '$dir' -mindepth $depth -maxdepth $depth | wc -l"
+        else
+            count_cmd="find '$dir' -mindepth $depth -maxdepth $depth -not -path '*/\.*' | wc -l"
+        fi
+
+        eval "$count_cmd"
+    }
+
+    # Determine the optimal depth
+    local depth=0
+    local total_count=0
+    while true; do
+        ((depth++))
+        local level_count=$(count_at_depth $depth)
+        total_count=$((total_count + level_count))
+
+        if [ $depth -ge $max_depth ] || [ $level_count -eq 0 ] || [ $total_count -ge $count_threshold ]; then
+            [ $depth -ge $max_depth ] #&& echo "  - Max depth reached"
+            [ $level_count -eq 0 ] #&& echo "  - No more items at this level"
+            [ $total_count -ge $count_threshold ] #&& echo "  - Total count threshold reached"
+            ((depth--))  # Decrement depth by 1
+            break
+        fi
+    done
+
+    # Use forced depth if specified
+    if [ -n "$force_depth" ]; then
+        depth=$force_depth
+    fi
+
+    # Ensure depth is at least 1
+    depth=$((depth > 0 ? depth : 1))
+
+    # Prepare tree options
+    local tree_opts=("-L" "$depth")
+    $show_hidden && tree_opts+=("-a")
+    $size_sort && tree_opts+=("--sort=size" "--dirsfirst")
+
+
+    # Run tree with the determined depth and options
+    tree "${tree_opts[@]}" "$dir"
+}
+
+alias whh="wh -a"
+alias whf="wh -f"
+

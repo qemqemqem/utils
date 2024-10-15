@@ -100,3 +100,6 @@ source ~/Dev/utils/bash/.bash_ps1
 echo "Hey!"
 neofetch
 art
+
+# Starship
+# eval "$(starship init bash)" 

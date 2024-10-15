@@ -96,7 +96,7 @@ git_status() {
 }
 
 trim_path() {
-  pwd | sed "s|^${HOME}/Dev/generally_intelligent|🤖|" | sed "s|^${HOME}/Dev|🤖/Dev|" | sed "s|^${HOME}|🏠|"
+  pwd | sed "s|^${HOME}/Dev/generally_intelligent|🤖|" | sed "s|^${HOME}/Dev|🏗 |" | sed "s|^${HOME}|🏠|"
 }
 
 # Capture the start time of the command
