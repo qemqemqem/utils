@@ -3,8 +3,8 @@
 # Handy commands for modifying this file
 alias bashupdate='source ~/.bashrc'
 # Consider using `tilde` instead!
-alias bashedit='ne ~/Dev/utils/bash/.bash_aliases && bashupdate'
-alias bashrcedit='ne ~/Dev/utils/bash/.bashrc && bashupdate'
+alias bashedit='micro ~/Dev/utils/bash/.bash_aliases && bashupdate'
+alias bashrcedit='micro ~/Dev/utils/bash/.bashrc && bashupdate'
 
 alias gs="git status"
 alias gc="git commit -am"
