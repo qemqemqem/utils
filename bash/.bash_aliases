@@ -161,6 +161,7 @@ wh() {
     local size_sort=false
     local force_depth=""
     local full_depth=false
+    local dir=""
 
     # Parse options
     while [[ $# -gt 0 ]]; do
