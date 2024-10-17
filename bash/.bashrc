@@ -29,6 +29,17 @@ PROMPT_COMMAND='history -a'
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
+# Shopt stuff
+shopt -s cmdhist # Saves multi-line commands in history as a single line.
+shopt -s dotglob # Includes filenames beginning with a '.' in pathname expansion.
+shopt -s no_empty_cmd_completion # Disables tab completion on an empty line.
+shopt -s extglob  # Enables extended pattern matching features.
+# Practical Examples of extglob:
+# rm !(*.txt): Remove all files except .txt files.
+# cp *.@(jpg|jpeg|png) /path/to/destination: Copy only .jpg, .jpeg, or .png files.
+# ls *(.): List only regular files (not directories).
+# mv !(file1|file2) /path/to/destination: Move all files except file1 and file2.
+
 # Editor
 export EDITOR=micro
 
