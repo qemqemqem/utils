@@ -283,3 +283,6 @@ fortuna() {
 
 # Call the function
 # spanish_fortune_with_translation
+
+# Another function
+source ~/Dev/utils/bash/analyze_jsonl.sh
