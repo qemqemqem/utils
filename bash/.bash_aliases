@@ -52,7 +52,7 @@ alias gitaddall="git add -A"
 
 # LOL
 # alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} jp2a --colors {}'
-alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} catimg {}'
+alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} catimg -w 120 {}'
 alias growtree='cbonsai -l'
 alias drawurl='drawurl_func() { curl -s "$1" | catimg -; }; drawurl_func'
 alias drawtext='bash ~/Dev/utils/bash/drawtext.sh'
