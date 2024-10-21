@@ -56,6 +56,7 @@ alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 
 alias growtree='cbonsai -l'
 alias drawurl='drawurl_func() { curl -s "$1" | catimg -; }; drawurl_func'
 alias drawtext='bash ~/Dev/utils/bash/drawtext.sh'
+# alias fortuna='fortune /usr/share/games/fortunes/es' # See below
 
 # Tools
 alias bat='batcat'
@@ -258,3 +259,26 @@ wh() {
 alias whh="wh -a"
 alias whf="wh -f"
 
+# Translating fortunes lol
+#!/bin/bash
+
+fortuna() {
+    # Get the Spanish fortune
+    # spanish_fortune=$(fortune /usr/share/games/fortunes/es)
+    # spanish_fortune=$(fortune /usr/share/games/fortunes/es | tr -d '\n' ' ')
+    spanish_fortune=$(fortune /usr/share/games/fortunes/es)
+
+    # Print the Spanish fortune
+    # echo "Spanish Fortune:"
+    echo "$spanish_fortune"
+    # echo
+
+    spanish_fortune=$(echo "$spanish_fortune" | tr '\n' ' ')
+
+    # Translate and print the English translation
+    # echo "English Translation:"
+    trans es:en --brief "$spanish_fortune"
+}
+
+# Call the function
+# spanish_fortune_with_translation

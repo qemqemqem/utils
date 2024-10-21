@@ -113,9 +113,11 @@ source ~/Dev/utils/bash/.bash_ps1
 
 # Print out a funny message
 # fortune
+# fortune /usr/share/games/fortunes/es # In Spanish, for practice
+fortuna # From .bash_aliases
 #echo "~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~"
-echo "Hey!"
-neofetch
+# echo "Hey!"
+# neofetch
 art
 
 # Starship
