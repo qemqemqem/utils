@@ -20,6 +20,7 @@ alias godev='cd ~/Dev'
 alias gohome='cd ~'
 alias godown='cd ~/Downloads'
 alias histf='history | fzf'
+alias gohere='tmux send-keys -t :.+ C-c "cd $(pwd)" Enter'
 
 # Apt
 alias get="sudo apt install -y"
