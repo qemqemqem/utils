@@ -69,7 +69,7 @@ function analyze_jsonl() {
 }
 
 # Usage
-analyze_jsonl "dinner_party.jsonl"
+# analyze_jsonl "dinner_party.jsonl"
 
 
 

@@ -90,6 +90,7 @@ export PATH=$PATH:/home/keenan/Stuff/mallet-2.0.8/bin
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=/usr/local/cuda/include:$LD_LIBRARY_PATH
 export PATH=$PATH:/usr/local/go/bin
+export PATH="$HOME/.cargo/bin:$PATH"
 
 # Ble.sh
 # https://github.com/akinomyoga/ble.sh
@@ -104,9 +105,6 @@ eval "$(atuin init bash)"
 
 # Alias definitions.
 source ~/Dev/utils/bash/.bash_aliases
-
-# Imbue specific stuff
-# source ~/Dev/utils/bash/.bash_imbue
 
 # Where the actual PS1 variable is set
 source ~/Dev/utils/bash/.bash_ps1
