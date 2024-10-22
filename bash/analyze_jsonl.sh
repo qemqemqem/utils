@@ -52,9 +52,6 @@ function show_structure_recursive() {
             ;;
         *)
             echo "$type"
-            ;;
-    esac
-}
 
 # Main function to process JSONL file
 function analyze_jsonl() {
@@ -69,8 +66,4 @@ function analyze_jsonl() {
 }
 
 # Usage
-analyze_jsonl "dinner_party.jsonl"
-
-
-
-
+# analyze_jsonl "dinner_party.jsonl"
