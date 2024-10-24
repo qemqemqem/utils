@@ -120,3 +120,8 @@ art
 
 # Starship
 # eval "$(starship init bash)"
+
+# Other tools
+# aichat, for ai chatting
+# Can use sgpt by pressing ctrl+l after writing something on the command line, https://github.com/TheR1D/shell_gpt
+

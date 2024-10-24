@@ -51,6 +51,9 @@ alias cat='bat'
 # alias grep='rg'
 alias gitaddall="git add -A"
 
+# Clipboard
+alias clip='xclip -selection clipboard'
+
 # LOL
 # alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} jp2a --colors {}'
 alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} catimg -w 120 {}'
@@ -286,3 +289,7 @@ fortuna() {
 
 # Another function
 source ~/Dev/utils/bash/.analyze_jsonl.sh
+
+# Content
+alias thenews='http https://www.bloomberg.com/ | html2markdown | cat | aichat "Summarize the headlines for today. Focus on finance and science. Include links."'
+
