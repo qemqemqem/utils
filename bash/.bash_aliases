@@ -20,7 +20,8 @@ alias godev='cd ~/Dev'
 alias gohome='cd ~'
 alias godown='cd ~/Downloads'
 alias histf='history | fzf'
-alias gohere='tmux send-keys -t :.+ C-c "cd $(pwd)" Enter'
+# alias gohere='tmux send-keys -t :.+ C-c "cd $(pwd)" Enter'
+alias gohere='for pane in $(tmux list-panes -a -F "#{pane_id}"); do tmux send-keys -t $pane C-c "cd $(pwd)" Enter; done'
 
 # Apt
 alias get="sudo apt install -y"
@@ -53,6 +54,9 @@ alias gitaddall="git add -A"
 
 # Clipboard
 alias clip='xclip -selection clipboard'
+
+# Python stuff
+alias pythonheretoo='export PYTHONPATH=$PYTHONPATH:.'
 
 # LOL
 # alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} jp2a --colors {}'
