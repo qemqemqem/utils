@@ -41,6 +41,7 @@ alias gdiff="git diff --color | ~/Installs/diff-so-fancy/diff-so-fancy"
 alias glog='git log --oneline --graph --decorate --all -n 20'
 alias gitrecent='git for-each-ref --sort=committerdate refs/heads/ --format="%(committerdate:short) %(refname:short)"'
 alias githistory='git log -n 20 --pretty=format:"%C(yellow)%h%C(reset) - %C(green)%s%C(reset)" --name-only --reverse'
+alias gitgood='git tag -a good -m "Currently in a good state"'
 
 # KDE
 alias fixkwin="DISPLAY=:0 kwin --replace &"
@@ -69,6 +70,9 @@ alias drawtext='bash ~/Dev/utils/bash/drawtext.sh'
 # Tools
 alias bat='batcat'
 alias pingo='ping 8.8.8.8'
+
+# For PyPi
+alias pipmeup='trash dist/ build/ *.egg-info && python -m build && twine check dist/* && twine upload dist/*'
 
 # HISTORY STUFF
 # Taken from Matthew's bashrc at https://gitlab.com/generally-intelligent/generally_intelligent/-/snippets/2584437
