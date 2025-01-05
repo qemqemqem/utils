@@ -95,7 +95,7 @@ export PATH="$HOME/.cargo/bin:$PATH"
 
 
 # THE FOLLOWING STUFF ONLY HAPPENS IF IT'S IN A REAL INTERACTIVE TERMINAL
-[[ $- == *i* ]] && [[ -n "${PS1-}" ]] || return
+[[ -t 0 ]] || return
 echo "Interactive Mode"
 
 
