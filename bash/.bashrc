@@ -11,8 +11,6 @@ case $- in
       *) return;;
 esac
 
-echo "Interactive Mode"
-
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -98,7 +96,7 @@ export PATH="$HOME/.cargo/bin:$PATH"
 
 # THE FOLLOWING STUFF ONLY HAPPENS IF IT'S IN INTERACTIVE MODE WITH A REAL TERMINAL
 [[ $- == *i* ]] && tty -s || return
-
+echo "Interactive Mode"
 
 
 
