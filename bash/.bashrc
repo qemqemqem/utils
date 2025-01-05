@@ -11,6 +11,8 @@ case $- in
       *) return;;
 esac
 
+echo "Interactive Mode"
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -91,6 +93,14 @@ export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=/usr/local/cuda/include:$LD_LIBRARY_PATH
 export PATH=$PATH:/usr/local/go/bin
 export PATH="$HOME/.cargo/bin:$PATH"
+
+
+
+# THE FOLLOWING STUFF ONLY HAPPENS IF IT'S IN INTERACTIVE MODE
+[[ $- != *i* ]] && return
+
+
+
 
 # Ble.sh
 # https://github.com/akinomyoga/ble.sh
