@@ -96,8 +96,8 @@ export PATH="$HOME/.cargo/bin:$PATH"
 
 
 
-# THE FOLLOWING STUFF ONLY HAPPENS IF IT'S IN INTERACTIVE MODE
-[[ $- != *i* ]] && return
+# THE FOLLOWING STUFF ONLY HAPPENS IF IT'S IN INTERACTIVE MODE WITH A REAL TERMINAL
+[[ $- == *i* ]] && tty -s || return
 
 
 
