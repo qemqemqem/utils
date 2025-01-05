@@ -96,7 +96,7 @@ export PATH="$HOME/.cargo/bin:$PATH"
 
 # THE FOLLOWING STUFF ONLY HAPPENS IF IT'S IN A REAL INTERACTIVE TERMINAL
 shopt -q login_shell || return
-echo "Interactive Mode"
+# echo "Interactive Mode"
 
 
 

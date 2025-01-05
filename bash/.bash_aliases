@@ -20,8 +20,8 @@ alias godev='cd ~/Dev'
 alias gohome='cd ~'
 alias godown='cd ~/Downloads'
 alias histf='history | fzf'
-# alias gohere='tmux send-keys -t :.+ C-c "cd $(pwd)" Enter'
-alias gohere='for pane in $(tmux list-panes -a -F "#{pane_id}"); do tmux send-keys -t $pane C-c "cd $(pwd)" Enter; done'
+alias gohere='tmux send-keys -t :.+ C-c "cd $(pwd)" Enter'
+# alias gohere='for pane in $(tmux list-panes -a -F "#{pane_id}"); do tmux send-keys -t $pane C-c "cd $(pwd)" Enter; done'
 
 # Apt
 alias get="sudo apt install -y"
@@ -33,6 +33,14 @@ alias push="git push -u origin"
 alias checkout="git checkout"
 alias ga="git add -A"
 alias commit="git commit -am"
+alias undocommit="git reset --soft HEAD~1"
+# commit() {
+  # # To allow commit messages without quotes around them
+  # git add -A
+  # local message="$*"
+  # git commit -m "$message"
+  # # git commit -am "$*"
+# }
 alias gp="git pull"
 alias gd="git diff"
 alias recentchanges="git log -n 5 --no-merge --name-only --pretty=format: | sort | uniq"
@@ -53,11 +61,15 @@ alias cat='bat'
 # alias grep='rg'
 alias gitaddall="git add -A"
 
+# My own tools!
+alias pp='pprint_problems'  # https://pypi.org/project/pprint-problems/
+
 # Clipboard
 alias clip='xclip -selection clipboard'
 
 # Python stuff
 alias pythonheretoo='export PYTHONPATH=$PYTHONPATH:.'
+alias venvo='source venv/bin/activate'
 
 # LOL
 # alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} jp2a --colors {}'
@@ -72,7 +84,7 @@ alias bat='batcat'
 alias pingo='ping 8.8.8.8'
 
 # For PyPi
-alias pipmeup='trash dist/ build/ *.egg-info && python -m build && twine check dist/* && twine upload dist/*'
+alias pipmeup='trash dist/ build/ *.egg-info ; python -m build && twine check dist/* ; twine upload dist/*'
 
 # HISTORY STUFF
 # Taken from Matthew's bashrc at https://gitlab.com/generally-intelligent/generally_intelligent/-/snippets/2584437
