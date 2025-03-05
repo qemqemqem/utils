@@ -109,7 +109,13 @@ ble-import -d integration/fzf-completion
 ble-import -d integration/fzf-key-bindings
 
 # Atuin with Ble.sh
-eval "$(atuin init bash)"
+# eval "$(atuin init bash)"
+_atuin_init() {
+  local out
+  out="$(atuin init bash)"
+  eval "${out}" > /dev/null 2>&1
+}
+_atuin_init
 
 # Alias definitions.
 source ~/Dev/utils/bash/.bash_aliases
@@ -133,3 +139,8 @@ art
 # aichat, for ai chatting
 # Can use sgpt by pressing ctrl+l after writing something on the command line, https://github.com/TheR1D/shell_gpt
 
+# Direnv
+eval "$(direnv hook bash)"
+
+# Disable Ctrl+Z in the terminal
+stty susp undef

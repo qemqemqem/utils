@@ -50,6 +50,7 @@ alias glog='git log --oneline --graph --decorate --all -n 20'
 alias gitrecent='git for-each-ref --sort=committerdate refs/heads/ --format="%(committerdate:short) %(refname:short)"'
 alias githistory='git log -n 20 --pretty=format:"%C(yellow)%h%C(reset) - %C(green)%s%C(reset)" --name-only --reverse'
 alias gitgood='git tag -a good -m "Currently in a good state"'
+alias oopsnocommit='git reset --soft HEAD~1'
 
 # KDE
 alias fixkwin="DISPLAY=:0 kwin --replace &"
@@ -60,9 +61,12 @@ alias bat='batcat'
 alias cat='bat'
 # alias grep='rg'
 alias gitaddall="git add -A"
+alias e="micro"
 
 # My own tools!
 alias pp='pprint_problems'  # https://pypi.org/project/pprint-problems/
+alias structure='pprint_problems --structure'
+alias pp1='pprint_problems -r -n 1'
 
 # Clipboard
 alias clip='xclip -selection clipboard'
@@ -70,6 +74,7 @@ alias clip='xclip -selection clipboard'
 # Python stuff
 alias pythonheretoo='export PYTHONPATH=$PYTHONPATH:.'
 alias venvo='source venv/bin/activate'
+alias acto='pythonheretoo && venvo'
 
 # LOL
 # alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} jp2a --colors {}'
@@ -313,3 +318,9 @@ source ~/Dev/utils/bash/.analyze_jsonl.sh
 # Content
 alias thenews='http https://www.bloomberg.com/ | html2markdown | cat | aichat "Summarize the headlines for today. Focus on finance and science. Include links."'
 
+# More for aichat and aider
+alias aichatter='aichat -s'
+alias aiderchat='aider --chat-mode ask'
+alias aiderm='aider --message'
+# Top of the chart as of Feb 3, 2025, https://aider.chat/docs/leaderboards/
+alias aiderr1='aider --architect --model openrouter/deepseek/deepseek-r1 --editor-model sonnet'
