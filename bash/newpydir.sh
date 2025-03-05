@@ -15,7 +15,11 @@ newpydir() {
     cat > .envrc << EOF
 # Python environment setup
 export PYTHONPATH=\$PYTHONPATH:.
+
+# Properly activate the virtual environment
 source venv/bin/activate
+export VIRTUAL_ENV=\$(pwd)/venv
+export PATH=\$(pwd)/venv/bin:\$PATH
 EOF
 
     # Allow direnv to load the new .envrc file
