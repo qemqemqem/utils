@@ -315,6 +315,9 @@ fortuna() {
 # Another function
 source ~/Dev/utils/bash/.analyze_jsonl.sh
 
+# Python development environment setup
+source ~/Dev/utils/bash/newpydir.sh
+
 # Content
 alias thenews='http https://www.bloomberg.com/ | html2markdown | cat | aichat "Summarize the headlines for today. Focus on finance and science. Include links."'
 
