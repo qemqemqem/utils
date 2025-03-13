@@ -1,6 +1,6 @@
 # The Cognitive Economics of Bash Aliases
 
-**How much time do we spend typing the same commands over and over?** The average developer types thousands of terminal commands daily, many of them repetitive. Bash aliases offer a powerful solution to this inefficiency, transforming verbose commands into intuitive shortcuts that reduce both cognitive load and typing effort.
+I'm not a system administrator by any means, but I've been a Linux user for almost 20 years, and that has transformed me into a frequent user of the command line. Looking back, there is one piece of advice I would give to my younger self the first time I sat down at a terminal and got trapped in vim. It's this: track the commands you use, and save them in a `.bash_aliases` file. That simple piece of advice has made me much more effective over the years, and the benefits compound.
 
 ## The Fundamental Value Proposition
 

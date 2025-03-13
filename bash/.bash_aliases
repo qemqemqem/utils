@@ -75,6 +75,7 @@ alias clip='xclip -selection clipboard'
 alias pythonheretoo='export PYTHONPATH=$PYTHONPATH:.'
 alias venvo='source venv/bin/activate'
 alias acto='pythonheretoo && venvo'
+alias py='python'
 
 # LOL
 # alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} jp2a --colors {}'
@@ -327,3 +328,5 @@ alias aiderchat='aider --chat-mode ask'
 alias aiderm='aider --message'
 # Top of the chart as of Feb 3, 2025, https://aider.chat/docs/leaderboards/
 alias aiderr1='aider --architect --model openrouter/deepseek/deepseek-r1 --editor-model sonnet'
+alias aiderlocal='aider --subtree-only'
+alias myaider='aidermyaider'  # Installed with `pipx install --suffix myaider --editable .` from Dev/aider
