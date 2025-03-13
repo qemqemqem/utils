@@ -181,6 +181,96 @@ alias thenews='http https://www.bloomberg.com/ | html2markdown | cat | aichat "S
 
 These commands transform the terminal from a purely utilitarian tool into something that can surprise and delight. The `fortuna` function even combines utility (language learning) with enjoyment.
 
+## Network Utilities
+
+Simple network diagnostics can be streamlined with aliases:
+
+```bash
+alias pingo='ping 8.8.8.8'  # Quick connectivity check to Google DNS
+```
+
+This trivial alias saves me from having to remember IP addresses and makes network troubleshooting more intuitive. When my connection seems flaky, typing `pingo` is faster and easier to remember than the full command.
+
+## Text Editing Shortcuts
+
+Text editing is a frequent task in the terminal. A short alias for your preferred editor saves countless keystrokes:
+
+```bash
+alias e="micro"  # Launch micro editor
+```
+
+This single-character alias might seem excessive, but consider how often you edit files. If you edit 20 files per day, this tiny shortcut adds up to significant time savings over months and years.
+
+## AI Tools Integration
+
+Modern development workflows increasingly incorporate AI assistants. Aliases make these tools more accessible:
+
+```bash
+alias aichatter='aichat -s'                # Start AI chat in stream mode
+alias aiderchat='aider --chat-mode ask'    # Open aider in chat mode
+alias aiderm='aider --message'             # Send a message to aider
+alias aiderr1='aider --architect --model openrouter/deepseek/deepseek-r1 --editor-model sonnet'  # Use specific model
+```
+
+These aliases transform complex AI tool invocations with multiple flags into memorable commands, making it easier to incorporate AI assistance into your daily workflow.
+
+## Custom Drawing Tools
+
+Terminal work doesn't have to be all text. These aliases add visual elements to the command line:
+
+```bash
+alias drawurl='drawurl_func() { curl -s "$1" | catimg -; }; drawurl_func'  # Display image from URL
+alias drawtext='bash ~/Dev/utils/bash/drawtext.sh'  # Convert text to ASCII art
+```
+
+The `drawurl` function fetches an image from a URL and displays it directly in the terminal, while `drawtext` transforms plain text into eye-catching ASCII art. These tools add a touch of creativity to an otherwise utilitarian environment.
+
+## Sophisticated History Management
+
+One of the most valuable aspects of my alias system is comprehensive command history tracking:
+
+```bash
+# Store all commands in a history file, one per day
+export PROMPT_COMMAND='if [ "$(id -u)" -ne 0 ]; then touch "${HOME}/.logs/bash-history-$(date "+%Y-%m-%d").log"; echo "$(date "+%H:%M") | $(pwd | sed "s|^${HOME}|~|") | $(cut -c 8- <<< "$(history 1)")" >> "${HOME}/.logs/bash-history-$(date "+%Y-%m-%d").log"; fi'
+
+# View history from a specific day
+histview() {
+  DAY=$(echo "$1" | grep -Eo '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
+  while read -r line
+  do
+    echo "$DAY | $line"
+  done < "$HOME/.logs/${1}"
+}
+```
+
+This system logs every command with timestamp and directory context, creating a searchable database of your terminal activity. The real power comes from the search functions that let you filter this history in various ways:
+
+```bash
+# Search recent history in current directory
+called() {
+  if [ "$1" == "here" ]; then
+    today | grep "$(pwd) "
+  elif [ "$1" == "below" ]; then
+    today | grep "$(pwd)"
+  elif [ "$1" == "in" ]; then
+    match=$2
+    if [[ "$2" != "/"* ]] && [[ "$2" != "~"* ]]; then
+      match="$(pwd)/$2"
+    fi
+    today | grep "$match "
+  else
+    today | grep ${@}
+  fi
+}
+```
+
+With these functions, I can type commands like:
+- `ever called git` to see all git commands I've ever run
+- `called here` to see commands run in my current directory today
+- `ever called in ~/Projects` to see commands run in a specific directory
+
+This transforms command history from a simple list into a powerful knowledge management system that helps me recall complex commands and understand my own work patterns.
+
 ## Meta-Aliases: Managing Your Alias System
 
 A well-designed alias system includes tools for its own maintenance:
@@ -233,6 +323,18 @@ If you're inspired to develop your own alias system, here are some principles to
 5. **Use functions for complex operations**: When an alias needs logic, use a bash function instead.
 
 6. **Test before committing**: Always test new aliases in your current shell before adding them permanently.
+
+## Git Log Visualization
+
+Git's default log output can be difficult to parse. These aliases transform it into something more useful:
+
+```bash
+alias glog='git log --oneline --graph --decorate --all -n 20'  # Visual commit graph
+alias gitrecent='git for-each-ref --sort=committerdate refs/heads/ --format="%(committerdate:short) %(refname:short)"'  # Branches by date
+alias githistory='git log -n 20 --pretty=format:"%C(yellow)%h%C(reset) - %C(green)%s%C(reset)" --name-only --reverse'  # Commits with files
+```
+
+The `glog` command creates a visual representation of your commit history, making branch relationships immediately apparent. `gitrecent` shows branches sorted by when they were last updated—invaluable for identifying stale work. `githistory` shows which files were modified in each commit, providing context that the standard log command lacks.
 
 ## Conclusion
 
