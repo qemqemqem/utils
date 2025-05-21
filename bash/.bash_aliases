@@ -336,3 +336,19 @@ alias aiderm='aider --message'
 alias aiderr1='aider --architect --model openrouter/deepseek/deepseek-r1 --editor-model sonnet'
 alias aiderlocal='aider --subtree-only'
 alias myaider='aidermyaider'  # Installed with `pipx install --suffix myaider --editable .` from Dev/aider
+
+# Help function for Pi tmux differences
+pi-help() {
+    echo -e "\n\033[1;31m=== Pi tmux Differences ===\033[0m"
+    echo -e "  • \033[1;36mShift+Arrow\033[0m - Move between panes (instead of Alt+Arrow)"
+    echo -e "  • \033[1;36mCtrl+b\033[0m - Pi's prefix (instead of Ctrl+a)"
+    
+    echo -e "\n\033[1;33mLeaving Safely:\033[0m"
+    echo -e "  • \033[1;36mCtrl+b d\033[0m - Detach (preserves session)"
+    echo -e "  • \033[1;36mexit-tmux\033[0m - Use instead of 'exit' to close pane"
+    echo -e "  • Regular 'exit' command is disabled in tmux"
+    
+    echo -e "\n\033[1;33mVisual Cues:\033[0m"
+    echo -e "  • Red status bar indicates you're on the Pi server"
+    echo -e "  • Robot emoji 🤖 in status bar (instead of bird 🐦)\n"
+}

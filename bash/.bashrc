@@ -150,3 +150,16 @@ fi
 
 # This is for npm
 export PATH=~/.npm-global/bin:$PATH
+
+# Override exit command to prevent accidental tmux session termination
+exit() {
+  if [ -n "$TMUX" ]; then
+    echo "You are in a tmux session. Use 'exit-tmux' to exit or 'tmux detach' to detach."
+    return 1
+  else
+    builtin exit
+  fi
+}
+
+# Create the actual exit command
+alias exit-tmux='builtin exit'
