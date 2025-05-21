@@ -91,7 +91,7 @@ export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=/usr/local/cuda/include:$LD_LIBRARY_PATH
 export PATH=$PATH:/usr/local/go/bin
 export PATH="$HOME/.cargo/bin:$PATH"
-
+export PATH=$PATH:$(go env GOROOT)/bin:$(go env GOPATH)/bin
 
 
 # THE FOLLOWING STUFF ONLY HAPPENS IF IT'S IN A REAL INTERACTIVE TERMINAL
@@ -144,3 +144,9 @@ eval "$(direnv hook bash)"
 
 # Disable Ctrl+Z in the terminal
 stty susp undef
+if [[ -z "$TMUX" ]]; then
+  stty susp undef
+fi
+
+# This is for npm
+export PATH=~/.npm-global/bin:$PATH
