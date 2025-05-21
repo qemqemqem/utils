@@ -1,5 +1,5 @@
 #!/bin/bash
-# The 'x' parameter causes all commands to print, for debugging
+# The 'x' parameter causes all commands to print, for debugging.
 set -euxo pipefail
 
 # Starship
