@@ -19,6 +19,8 @@ sudo apt install -y \
   gnupg \
   software-properties-common
 
+cd ~/Installs
+
 # Install Go
 GO_VERSION=1.22.3
 cd /tmp
@@ -44,6 +46,8 @@ curl -sS https://starship.rs/install.sh | sh
 sudo apt install -y catimg gridsite-clients fortune bat translate-shell cargo pipx
 
 pipx install aider-install
+
+curl -fsSL https://tailscale.com/install.sh | sh
 
 echo "\n\n\nEVERYTHING AFTER HERE IS REAL SLOW!\n\n\n"
 

@@ -341,6 +341,8 @@ alias myaider='aidermyaider'  # Installed with `pipx install --suffix myaider --
 # Usage: pi-tmux [session_name]
 # Note! This relies on having a .ssh/config file set up, and note that the host name of the Pi might be"andrews-raspberrypi"
 goraspberry() {
+    sudo tailscale up
+
     # Set default session name if not provided
     local session=${1:-mysession}
 
