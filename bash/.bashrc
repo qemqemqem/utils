@@ -154,7 +154,7 @@ export PATH=~/.npm-global/bin:$PATH
 # Override exit command to prevent accidental tmux session termination
 exit() {
   if [ -n "$TMUX" ]; then
-    echo "You are in a tmux session. Use 'exit-tmux' to exit or 'tmux detach' to detach."
+    echo "You are in a tmux session. Use 'tmux detach' to detach, or 'exit-tmux' to exit the current pane."
     return 1
   else
     builtin exit
