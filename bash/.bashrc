@@ -105,8 +105,8 @@ shopt -q login_shell || return
 source ~/Installs/ble.sh/out/ble.sh
 bleopt prompt_eol_mark='⏎'
 # Per https://github.com/akinomyoga/ble.sh#28-fzf-integration
-ble-import -d integration/fzf-completion
-ble-import -d integration/fzf-key-bindings
+# ble-import -d integration/fzf-completion
+# ble-import -d integration/fzf-key-bindings
 
 # Atuin with Ble.sh
 # eval "$(atuin init bash)"
