@@ -41,4 +41,14 @@ touch ~/.logs/bash-history-$(date +%F).log
 curl -sS https://starship.rs/install.sh | sh
 
 
-sudo apt install -y catimg gridsite-clients fortune
+sudo apt install -y catimg gridsite-clients fortune bat translate-shell cargo pipx
+
+pipx install aider-install
+
+echo "\n\n\nEVERYTHING AFTER HERE IS REAL SLOW!\n\n\n"
+
+sudo apt install -y npm
+
+sudo npm install -g @anthropic-ai/claude-code
+
+cargo install aichat

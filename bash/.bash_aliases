@@ -295,7 +295,6 @@ alias whh="wh -a"
 alias whf="wh -f"
 
 # Translating fortunes lol
-#!/bin/bash
 
 fortuna() {
     # Get the Spanish fortune
