@@ -43,7 +43,7 @@ touch ~/.logs/bash-history-$(date +%F).log
 curl -sS https://starship.rs/install.sh | sh
 
 
-sudo apt install -y catimg gridsite-clients fortune bat translate-shell cargo pipx
+sudo apt install -y catimg gridsite-clients fortune bat translate-shell cargo pipx trash-cli
 
 pipx install aider-install
 
