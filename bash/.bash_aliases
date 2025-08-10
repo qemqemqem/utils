@@ -296,7 +296,6 @@ alias whh="wh -a"
 alias whf="wh -f"
 
 # Translating fortunes lol
-#!/bin/bash
 
 fortuna() {
     # Get the Spanish fortune
@@ -340,3 +339,29 @@ alias aiderm='aider --message'
 alias aiderr1='aider --architect --model openrouter/deepseek/deepseek-r1 --editor-model sonnet'
 alias aiderlocal='aider --subtree-only'
 alias myaider='aidermyaider'  # Installed with `pipx install --suffix myaider --editable .` from Dev/aider
+
+# For the raspberry Pi server
+# Connect to Pi with tmux session
+# Usage: pi-tmux [session_name]
+# Note! This relies on having a .ssh/config file set up, and note that the host name of the Pi might be"andrews-raspberrypi"
+goraspberry() {
+    tailscale status >/dev/null 2>&1 || sudo tailscale up
+
+    # Set default session name if not provided
+    local session=${1:-mysession}
+
+    # Display connecting message
+    echo "Connecting to Pi with tmux session: $session"
+
+    # Connect to Pi and attach to existing session or create new one
+    ssh raspberrypi -t "tmux attach -t $session || tmux new -s $session"
+
+    # Show message when connection closes
+    echo "Disconnected from Pi tmux session: $session"
+}
+
+# Claude Code
+alias claude-api='ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY claude'
+alias claude-pro='unset ANTHROPIC_API_KEY && claude'
+alias claude='claude-pro'
+
