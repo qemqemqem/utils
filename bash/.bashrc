@@ -93,9 +93,6 @@ export PATH=$PATH:/usr/local/go/bin
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH=$PATH:$(go env GOROOT)/bin:$(go env GOPATH)/bin
 
-# Tailscale
-sudo tailscale up
-
 
 # THE FOLLOWING STUFF ONLY HAPPENS IF IT'S IN A REAL INTERACTIVE TERMINAL
 shopt -q login_shell || return
@@ -108,15 +105,25 @@ shopt -q login_shell || return
 source ~/Installs/ble.sh/out/ble.sh
 bleopt prompt_eol_mark='⏎'
 # Per https://github.com/akinomyoga/ble.sh#28-fzf-integration
-# ble-import -d integration/fzf-completion
-# ble-import -d integration/fzf-key-bindings
+ble-import -d integration/fzf-completion
+ble-import -d integration/fzf-key-bindings
 
 # Atuin with Ble.sh
 # eval "$(atuin init bash)"
 _atuin_init() {
+  # Save current monitor mode state
+  local monitor_was_on=false
+  [[ $- == *m* ]] && monitor_was_on=true
+  
+  # Temporarily disable job control notifications
+  set +m
+  
   local out
   out="$(atuin init bash)"
   eval "${out}" > /dev/null 2>&1
+  
+  # Restore monitor mode if it was originally on
+  $monitor_was_on && set -m
 }
 _atuin_init
 
@@ -153,16 +160,3 @@ fi
 
 # This is for npm
 export PATH=~/.npm-global/bin:$PATH
-
-# Override exit command to prevent accidental tmux session termination
-exit() {
-  if [ -n "$TMUX" ]; then
-    echo "You are in a tmux session. Use 'tmux detach' to detach, or 'exit-tmux' to exit the current pane."
-    return 1
-  else
-    builtin exit
-  fi
-}
-
-# Create the actual exit command
-alias exit-tmux='builtin exit'
