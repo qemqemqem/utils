@@ -111,9 +111,19 @@ ble-import -d integration/fzf-key-bindings
 # Atuin with Ble.sh
 # eval "$(atuin init bash)"
 _atuin_init() {
+  # Save current monitor mode state
+  local monitor_was_on=false
+  [[ $- == *m* ]] && monitor_was_on=true
+  
+  # Temporarily disable job control notifications
+  set +m
+  
   local out
   out="$(atuin init bash)"
   eval "${out}" > /dev/null 2>&1
+  
+  # Restore monitor mode if it was originally on
+  $monitor_was_on && set -m
 }
 _atuin_init
 

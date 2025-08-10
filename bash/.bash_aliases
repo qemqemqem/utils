@@ -31,6 +31,7 @@ alias get="sudo apt install -y"
 alias gitmain="git checkout main"
 alias gs="git status && git diff --stat && gitcheck"
 alias push="git push -u origin"
+alias pull="git pull"
 alias checkout="git checkout"
 alias ga="git add -A"
 alias commit="git commit -am"
@@ -355,3 +356,9 @@ goraspberry() {
     # Show message when connection closes
     echo "Disconnected from Pi tmux session: $session"
 }
+
+# Claude Code
+alias claude-api='ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY claude'
+alias claude-pro='unset ANTHROPIC_API_KEY && claude'
+alias claude='claude-pro'
+
