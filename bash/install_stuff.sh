@@ -1,4 +1,5 @@
 #!/bin/bash
+# The 'x' parameter causes all commands to print, for debugging.
 set -euxo pipefail
 
 # Create missing directories
@@ -42,6 +43,26 @@ touch ~/.logs/bash-history-$(date +%F).log
 # Starship
 curl -sS https://starship.rs/install.sh | sh
 
+
+sudo apt install -y catimg gridsite-clients fortune
+
+# Create missing directories
+mkdir -p ~/Dev ~/Installs ~/Pictures/Art ~/.logs ~/.atuin/bin
+
+# Install base packages
+sudo apt update
+sudo apt install -y \
+  fortune \
+  direnv \
+  fzf \
+  curl \
+  git \
+  tmux \
+  build-essential \
+  unzip \
+  wget \
+  gnupg \
+  software-properties-common
 
 sudo apt install -y catimg gridsite-clients fortune bat translate-shell cargo pipx trash-cli
 
