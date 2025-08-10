@@ -350,5 +350,5 @@ pi-help() {
     
     echo -e "\n\033[1;33mVisual Cues:\033[0m"
     echo -e "  • Red status bar indicates you're on the Pi server"
-    echo -e "  • Robot emoji 🤖 in status bar (instead of bird 🐦)\n"
+    echo -e "  • Berry emoji 🍓 in status bar (instead of bird 🐦)\n"
 }

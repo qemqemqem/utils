@@ -93,6 +93,9 @@ export PATH=$PATH:/usr/local/go/bin
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH=$PATH:$(go env GOROOT)/bin:$(go env GOPATH)/bin
 
+# Tailscale
+sudo tailscale up
+
 
 # THE FOLLOWING STUFF ONLY HAPPENS IF IT'S IN A REAL INTERACTIVE TERMINAL
 shopt -q login_shell || return
