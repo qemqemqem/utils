@@ -9,6 +9,10 @@ alias bashrcedit='micro ~/Dev/utils/bash/.bashrc && bashupdate'
 alias gs="git status"
 alias gc="git commit -am"
 
+# MacOS stuff
+alias clip='pbcopy'  # macOS built-in
+alias pip='pip3'
+
 # shortcuts
 # lr:  Full Recursive Directory Listing
 alias lr='ls -R | grep ":$" | sed -e '\''s/:$//'\'' -e '\''s/[^-][^\/]*\//--/g'\'' -e '\''s/^/   /'\'' -e '\''s/-/|/'\'' | less'
@@ -20,6 +24,7 @@ alias godev='cd ~/Dev'
 alias gohome='cd ~'
 alias godown='cd ~/Downloads'
 alias gomess='cd ~/Dev/messingaround'
+alias gopro='cd ~/prophecy'
 alias histf='history | fzf'
 alias gohere='tmux send-keys -t :.+ C-c "cd $(pwd)" Enter'
 # alias gohere='for pane in $(tmux list-panes -a -F "#{pane_id}"); do tmux send-keys -t $pane C-c "cd $(pwd)" Enter; done'
@@ -59,7 +64,7 @@ alias fixkwin="DISPLAY=:0 kwin --replace &"
 
 # Tools
 alias catcat='cat'
-alias bat='batcat'
+alias bat='bat' # Use bat directly instead of batcat on MacOS
 alias cat='bat'
 # alias grep='rg'
 alias gitaddall="git add -A"
@@ -91,7 +96,6 @@ alias drawtext='bash ~/Dev/utils/bash/drawtext.sh'
 # alias fortuna='fortune /usr/share/games/fortunes/es' # See below
 
 # Tools
-alias bat='batcat'
 alias pingo='ping 8.8.8.8'
 
 # For PyPi
@@ -103,7 +107,17 @@ alias pipmeup='trash dist/ build/ *.egg-info ; python -m build && twine check di
 # Explanation https://chat.openai.com/share/e551dfb1-978e-46be-a9db-0aa9c4fb07ec
 
 # Store all my commands in a history file, one per day
-export PROMPT_COMMAND='if [ "$(id -u)" -ne 0 ]; then touch "${HOME}/.logs/bash-history-$(date "+%Y-%m-%d").log"; echo "$(date "+%H:%M") | $(pwd | sed "s|^${HOME}|~|") | $(cut -c 8- <<< "$(history 1)")" >> "${HOME}/.logs/bash-history-$(date "+%Y-%m-%d").log"; fi'
+# export PROMPT_COMMAND='if [ "$(id -u)" -ne 0 ]; then touch "${HOME}/.logs/bash-history-$(date "+%Y-%m-%d").log"; echo "$(date "+%H:%M") | $(pwd | sed "s|^${HOME}|~|") | $(cut -c 8- <<< "$(history 1)")" >> "${HOME}/.logs/bash-history-$(date "+%Y-%m-%d").log"; fi'
+# Custom history logging function
+log_command() {
+    if [ "$(id -u)" -ne 0 ]; then 
+        touch "${HOME}/.logs/bash-history-$(date "+%Y-%m-%d").log"
+        echo "$(date "+%H:%M") | $(pwd | sed "s|^${HOME}|~|") | $(cut -c 8- <<< "$(history 1)")" >> "${HOME}/.logs/bash-history-$(date "+%Y-%m-%d").log"
+    fi
+}
+# Combine with atuin's PROMPT_COMMAND
+export PROMPT_COMMAND="log_command; history -a; ${PROMPT_COMMAND}"
+# eval "$(atuin init bash)"
 
 # To use this function, you'd call `histview bash-history-YYYY-MM-DD.log` to view the logged commands for the specified date.
 histview() {
@@ -300,7 +314,7 @@ fortuna() {
     # Get the Spanish fortune
     # spanish_fortune=$(fortune /usr/share/games/fortunes/es)
     # spanish_fortune=$(fortune /usr/share/games/fortunes/es | tr -d '\n' ' ')
-    spanish_fortune=$(fortune /usr/share/games/fortunes/es)
+    spanish_fortune=$(fortune /opt/homebrew/share/games/fortunes/es)
 
     # Print the Spanish fortune
     # echo "Spanish Fortune:"
@@ -354,4 +368,24 @@ goraspberry() {
 
     # Show message when connection closes
     echo "Disconnected from Pi tmux session: $session"
+}
+
+# Prophecy Stuff
+alias k='kubectl'
+
+# Git worktree helper
+worktree() {
+    gopro && if [ -d ~/Dev/prophecy-$1 ]; then
+        cd ~/Dev/prophecy-$1
+    else
+        git worktree add -b andrew/$1 ~/Dev/prophecy-$1 master && cd ~/Dev/prophecy-$1
+    fi
+}
+
+worktreehere() {
+    gopro && if [ -d ~/Dev/prophecy-$1 ]; then
+        cd ~/Dev/prophecy-$1
+    else
+        git worktree add -b andrew/$1 ~/Dev/prophecy-$1 && cd ~/Dev/prophecy-$1
+    fi
 }

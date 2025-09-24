@@ -100,22 +100,16 @@ shopt -q login_shell || return
 
 
 
-# Ble.sh
+# Ble.sh (disabled on macOS)
 # https://github.com/akinomyoga/ble.sh
-source ~/Installs/ble.sh/out/ble.sh
-bleopt prompt_eol_mark='⏎'
+# source ~/Installs/ble.sh/out/ble.sh
+# bleopt prompt_eol_mark='⏎'
 # Per https://github.com/akinomyoga/ble.sh#28-fzf-integration
-ble-import -d integration/fzf-completion
-ble-import -d integration/fzf-key-bindings
+# ble-import -d integration/fzf-completion
+# ble-import -d integration/fzf-key-bindings
 
-# Atuin with Ble.sh
-# eval "$(atuin init bash)"
-_atuin_init() {
-  local out
-  out="$(atuin init bash)"
-  eval "${out}" > /dev/null 2>&1
-}
-_atuin_init
+# Atuin 
+eval "$(atuin init bash)"
 
 # Alias definitions.
 source ~/Dev/utils/bash/.bash_aliases
@@ -150,3 +144,24 @@ fi
 
 # This is for npm
 export PATH=~/.npm-global/bin:$PATH
+
+# Ensure Homebrew bash comes first
+export PATH="/opt/homebrew/bin:$PATH"
+
+export PATH="/opt/homebrew/opt/gnu-coreutils/libexec/gnubin:$PATH"
+export PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
+export PATH="/opt/homebrew/opt/gnu-tar/libexec/gnubin:$PATH"
+export PATH="/opt/homebrew/opt/grep/libexec/gnubin:$PATH"
+export PATH="/opt/homebrew/opt/findutils/libexec/gnubin:$PATH"
+
+# Prophecy Stuff
+
+export KUBECONFIG=~/.kube/config:~/Downloads/andrew-dev-k3s.yaml
+
+
+. "$HOME/.atuin/bin/env"
+eval "$(atuin init bash)"
+
+[[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
+source ~/.bash-preexec.sh
+echo "BASHRC LOADED"
