@@ -1,0 +1,208 @@
+#!/bin/zsh
+
+# Beautiful green, blue, yellow color scheme for macOS with true color support
+# Optimized for iTerm2 with enhanced macOS integration - ZSH VERSION
+
+# True color RGB functions for richer colors
+color_rgb() { echo -ne "%{\033[48;2;$1;$2;$3m\033[38;2;$4;$5;$6m%}"; }
+
+# macOS-inspired color palette using true colors
+color_bg_time() { color_rgb 30 139 195 255 255 255; }        # macOS system blue, white text
+color_bg_virtualenv() { color_rgb 52 168 83 0 0 0; }         # macOS system green, black text  
+color_bg_path() { color_rgb 90 200 245 0 0 0; }              # Light blue, black text
+color_bg_files() { color_rgb 255 214 10 0 0 0; }             # macOS system yellow, black text
+color_bg_git_branch() { color_rgb 48 176 199 255 255 255; }   # macOS system teal, white text
+color_bg_git_status() { color_rgb 255 149 0 0 0 0; }         # macOS system orange, black text
+color_bg_duration() { color_rgb 100 210 255 0 0 0; }         # Cyan blue, black text
+color_bg_battery() { color_rgb 175 82 222 255 255 255; }     # macOS system purple, white text
+color_bg_wifi() { color_rgb 162 132 94 255 255 255; }        # macOS system brown, white text
+
+# Accent colors for visual hierarchy
+color_bg_clean() { color_rgb 40 205 65 255 255 255; }        # Bright green for clean states
+color_bg_error() { color_rgb 255 59 48 255 255 255; }        # macOS system red, white text
+
+# Sophisticated foreground colors
+color_fg_prompt() { echo -ne '%{\033[38;2;30;139;195m%}'; }      # macOS blue for prompt symbol
+color_fg_separator() { echo -ne '%{\033[38;2;152;152;157m%}'; }  # macOS gray for separators
+color_fg_accent() { echo -ne '%{\033[38;2;48;176;199m%}'; }      # macOS teal for accents
+color_fg_muted() { echo -ne '%{\033[38;2;174;174;178m%}'; }      # Light gray for less important text
+
+# Utility functions
+color_reset() { echo -ne '%{\033[0m%}'; }
+
+# iTerm2 semantic history markers for clickable paths
+iterm2_semantic_history() {
+    if [[ "$TERM_PROGRAM" = "iTerm.app" ]]; then
+        echo -ne "%{\033]1337;CurrentDir=$PWD\007%}"
+    fi
+}
+
+# iTerm2 badge support with custom styling
+set_iterm2_badge() {
+    if [[ "$TERM_PROGRAM" = "iTerm.app" ]]; then
+        local branch=$(parse_git_branch)
+        local project=$(basename "$PWD")
+        local badge_text=""
+        
+        if [[ -n "$branch" ]]; then
+            badge_text="$project @ $branch"
+        else
+            badge_text="$project"
+        fi
+        
+        # Create badge with light green color and smaller size
+        local styled_badge="\(textColor=0.4,0.8,0.4,1.0,fontSize=10)$badge_text"
+        echo -ne "%{\033]1337;SetBadgeFormat=$(echo -n "$styled_badge" | base64)\007%}"
+    fi
+}
+
+# Function to display the last command exit status
+command_status() {
+    local success_emojis=("🌱" "🌿" "🌳" "🌲" "🍀" "🌵" "🍃" "🌴" "🌾" "🍏" "🥦" "🥬")
+    local failure_emojis=("🍂" "🍁" "🍄" "🌋" "🔥" "💥" "🧨" "🚫" "❌" "🛑" "📛" "🚨")
+    local index=$(($RANDOM % ${#success_emojis[@]}))
+    if [[ $LAST_EXIT_CODE -eq 0 ]]; then
+        echo "${success_emojis[$index]}"
+    else
+        echo "${failure_emojis[$index]}"
+    fi
+}
+
+# Function to get the number of files in the current directory
+number_of_files() {
+    local count=(*(.))
+    echo -n "${#count[@]}"
+}
+
+number_of_directories() {
+    local count=(*(/.))
+    echo -n "${#count[@]}"
+}
+
+# Function to get the size of the current directory
+directory_size() {
+    echo -n "$(du -sh . 2>/dev/null | cut -f1)B"
+}
+
+# macOS system integration functions
+battery_status() {
+    if command -v pmset >/dev/null 2>&1; then
+        local battery_info=$(pmset -g batt | grep -Eo "[0-9]+%" | head -1)
+        local charging=$(pmset -g batt | grep -q "AC Power" && echo "⚡" || echo "🔋")
+        if [[ -n "$battery_info" ]]; then
+            echo -n "${charging}${battery_info}"
+        fi
+    fi
+}
+
+wifi_status() {
+    if command -v networksetup >/dev/null 2>&1; then
+        local wifi_name=$(networksetup -getairportnetwork en0 2>/dev/null | cut -d: -f2 | sed 's/^ *//')
+        if [[ "$wifi_name" != "You are not associated with an AirPort network." && -n "$wifi_name" ]]; then
+            echo -n "📶${wifi_name}"
+        fi
+    fi
+}
+
+notification_count() {
+    # Get notification count from NotificationCenter (requires accessibility permissions)
+    local count=$(sqlite3 ~/Library/Application\ Support/NotificationCenter/db2/db "SELECT COUNT(*) FROM record WHERE delivered = 1 AND shown = 1;" 2>/dev/null || echo "0")
+    if [[ "$count" -gt 0 ]]; then
+        echo -n "🔔${count}"
+    fi
+}
+
+# Function to display the duration of the last command
+command_duration() {
+    echo -n "$(color_bg_duration)$(($END_TIME - $START_TIME))s$(color_reset)"
+}
+
+# Function to display the current virtual environment
+virtual_env() {
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        echo -n "$(basename "$VIRTUAL_ENV")"
+    fi
+}
+
+parse_git_branch() {
+    git symbolic-ref --short HEAD 2>/dev/null || git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD 2>/dev/null
+}
+
+git_status() {
+    # Check if inside a Git repository
+    git rev-parse --is-inside-work-tree &>/dev/null || return
+    
+    # Use git status porcelain for more reliable parsing
+    local status_output=$(git status --porcelain 2>/dev/null)
+    [[ -z "$status_output" ]] && return  # Clean repo
+    
+    local staged=0 modified=0 untracked=0
+    while IFS= read -r line; do
+        case "${line:0:2}" in
+            [MADRCU]' ') ((staged++))
+            ;;
+            ' '[MDU]) ((modified++))
+            ;;
+            '??') ((untracked++))
+            ;;
+            [MADRCU][MDU]) ((staged++)); ((modified++))
+            ;;
+        esac
+    done <<< "$status_output"
+    
+    local output=""
+    [[ $staged -gt 0 ]] && output+="${staged}s"
+    [[ $modified -gt 0 ]] && output+="${modified}c"
+    [[ $untracked -gt 0 ]] && output+="${untracked}u"
+    echo -n "$output"
+}
+
+trim_path() {
+    local path="$PWD"
+    path="${path/#$HOME\/Dev\/generally_intelligent/🤖}"
+    path="${path/#$HOME\/prophecy/🔮/prophecy}"
+    path="${path/#$HOME\/Dev/🏗 }"
+    path="${path/#$HOME/🏠}"
+    echo -n "$path"
+}
+
+# Enable command substitution in prompts and glob expansion
+setopt PROMPT_SUBST
+setopt NULL_GLOB
+
+# ZSH prompt hooks (equivalent to bash DEBUG trap and PROMPT_COMMAND)
+preexec() {
+    START_TIME=$SECONDS
+}
+
+precmd() {
+    LAST_EXIT_CODE=$?
+    END_TIME=$SECONDS
+    
+    # iTerm2 enhancements
+    iterm2_semantic_history
+    # set_iterm2_badge  # Disabled for now
+}
+
+# Construct the enhanced macOS/iTerm2 prompt with system integration
+PS1='$(color_bg_time) %D{%H:%M:%S} $(color_reset)$(color_fg_separator)$(color_reset) $(command_status) '
+PS1+='$(color_bg_virtualenv)$(virtual_env)$(color_reset)$(color_fg_separator)$(color_reset)$(color_bg_path) $(trim_path) $(color_reset)$(color_fg_separator)$(color_reset)'
+# PS1+='$(color_bg_files)$(number_of_files)f$(number_of_directories)d$(color_reset)$(color_fg_separator)$(color_reset)'
+PS1+='$(color_bg_git_branch) $(parse_git_branch) $(color_reset)$(color_fg_separator)$(color_reset)'
+PS1+='$(color_bg_git_status)$(git_status)$(color_reset) '
+PS1+='$(color_fg_prompt)❯$(color_reset) '
+
+# Simple right prompt with a happy bird
+# RPROMPT='🐦'
+
+# iTerm2 integration enhancements
+if [[ "$TERM_PROGRAM" = "iTerm.app" ]]; then
+    # Enable iTerm2 shell integration if available
+    [[ -e "${HOME}/.iterm2_shell_integration.zsh" ]] && source "${HOME}/.iterm2_shell_integration.zsh"
+    
+    # Set iTerm2 tab title to current directory - zsh style
+    precmd_functions+=(set_iterm_title)
+    set_iterm_title() {
+        echo -ne "%{\033]0;$(basename "$PWD")\007%}"
+    }
+fi

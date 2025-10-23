@@ -1,0 +1,551 @@
+# Use "type my_alias" to see what an alias refers to
+
+# Handy commands for modifying this file
+alias zshupdate='source ~/.zshrc'
+alias bashupdate='source ~/.zshrc'
+alias bashedit='micro ~/Dev/utils/bash/.zsh_aliases && zshupdate'
+# Consider using `tilde` instead!
+alias zshedit='micro ~/Dev/utils/bash/.zsh_aliases && zshupdate'
+alias zshrcedit='micro ~/Dev/utils/bash/.zshrc && zshupdate'
+
+alias gs="git status"
+alias gc="git commit -am"
+
+# MacOS stuff
+alias clip='pbcopy'  # macOS built-in
+alias pip='pip3'
+alias python='python3'
+
+# shortcuts
+# lr:  Full Recursive Directory Listing
+alias lr='ls -R | grep ":$" | sed -e '\''s/:$//'\'' -e '\''s/[^-][^\/]*\//--/g'\'' -e '\''s/^/   /'\'' -e '\''s/-/|/'\'' | less'
+# some more ls aliases
+alias ll='ls -alFh'
+alias llt='ll -t'
+alias la='ls -A'
+alias godev='cd ~/Dev'
+alias gohome='cd ~'
+alias godown='cd ~/Downloads'
+alias gomess='cd ~/Dev/messingaround'
+alias gopro='cd ~/prophecy'
+alias goco='cd ~/prophecy/copilot'
+alias histf='history | fzf'
+alias gohere='tmux send-keys -t :.+ C-c "cd $(pwd)" Enter'
+# alias gohere='for pane in $(tmux list-panes -a -F "#{pane_id}"); do tmux send-keys -t $pane C-c "cd $(pwd)" Enter; done'
+
+# Apt
+alias get="sudo apt install -y"
+
+# Git
+alias gitmain="git checkout main"
+alias gs="git status && git diff --stat && gitcheck"
+alias push="git push -u origin"
+alias checkout="git checkout"
+alias ga="git add -A"
+alias commit="git commit -am"
+alias undocommit="git reset --soft HEAD~1"
+# commit() {
+  # # To allow commit messages without quotes around them
+  # git add -A
+  # local message="$*"
+  # git commit -m "$message"
+  # # git commit -am "$*"
+# }
+alias gp="git pull"
+alias gd="git diff"
+alias recentchanges="git log -n 5 --no-merge --name-only --pretty=format: | sort | uniq"
+alias gdiff="git diff --color | ~/Installs/diff-so-fancy/diff-so-fancy"
+# alias glog='git log -n 20 --pretty=format:"%h -- %an, %ar -- %s" --reverse'
+alias glog='git log --oneline --graph --decorate --all -n 20'
+alias gitrecent='git for-each-ref --sort=committerdate refs/heads/ --format="%(committerdate:short) %(refname:short)"'
+alias githistory='git log -n 20 --pretty=format:"%C(yellow)%h%C(reset) - %C(green)%s%C(reset)" --name-only --reverse'
+alias gitgood='git tag -a good -m "Currently in a good state"'
+alias oopsnocommit='git reset --soft HEAD~1'
+alias gitcheck='git fetch && git status | grep -q "Your branch is behind" && echo "There are Upstream Changes!" || echo "Up to Date!"'
+
+# KDE
+alias fixkwin="DISPLAY=:0 kwin --replace &"
+
+# Tools
+alias catcat='cat'
+alias bat='bat' # Use bat directly instead of batcat on MacOS
+alias cat='bat'
+# alias grep='rg'
+alias gitaddall="git add -A"
+alias e="micro"
+alias whatsonthenetwork="avahi-browse -a -t"
+
+# My own tools!
+alias pp='pprint_problems'  # https://pypi.org/project/pprint-problems/
+alias structure='pprint_problems --structure'
+alias pp1='pprint_problems -r -n 1'
+
+# Clipboard
+alias clip='xclip -selection clipboard'
+
+# Python stuff
+pythonheretoo() {
+    export PYTHONPATH=$PYTHONPATH:.
+}
+alias venvo='source venv/bin/activate'
+alias acto='pythonheretoo && venvo'
+alias py='python'
+
+# LOL
+# alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} jp2a --colors {}'
+alias art='find ~/Pictures/Art -type f -name "*.jpg" -o -name "*.png" | shuf -n 1 | xargs -I {} catimg -w 120 {}'
+alias growtree='cbonsai -l'
+alias drawurl='drawurl_func() { curl -s "$1" | catimg -; }; drawurl_func'
+alias drawtext='bash ~/Dev/utils/bash/drawtext.sh'
+# alias fortuna='fortune /usr/share/games/fortunes/es' # See below
+
+# Tools
+alias pingo='ping 8.8.8.8'
+
+# For PyPi
+alias pipmeup='trash dist/ build/ *.egg-info ; python -m build && twine check dist/* ; twine upload dist/*'
+
+# HISTORY STUFF
+# Taken from Matthew's bashrc at https://gitlab.com/generally-intelligent/generally_intelligent/-/snippets/2584437
+# It originally comes from https://spin.atomicobject.com/2016/05/28/log-bash-history/ and https://news.ycombinator.com/item?id=11806553, but has been extended over time.
+# Explanation https://chat.openai.com/share/e551dfb1-978e-46be-a9db-0aa9c4fb07ec
+
+# Store all my commands in a history file, one per day
+# export PROMPT_COMMAND='if [ "$(id -u)" -ne 0 ]; then touch "${HOME}/.logs/bash-history-$(date "+%Y-%m-%d").log"; echo "$(date "+%H:%M") | $(pwd | sed "s|^${HOME}|~|") | $(cut -c 8- <<< "$(history 1)")" >> "${HOME}/.logs/bash-history-$(date "+%Y-%m-%d").log"; fi'
+# Custom history logging function
+log_command() {
+    if [ "$(id -u)" -ne 0 ]; then 
+        touch "${HOME}/.logs/zsh-history-$(date "+%Y-%m-%d").log"
+        echo "$(date "+%H:%M") | $(pwd | sed "s|^${HOME}|~|") | $(fc -ln -1)" >> "${HOME}/.logs/zsh-history-$(date "+%Y-%m-%d").log"
+    fi
+}
+
+# Zsh hook function - equivalent to bash PROMPT_COMMAND
+precmd() {
+    log_command
+}
+
+# To use this function, you'd call `histview zsh-history-YYYY-MM-DD.log` to view the logged commands for the specified date.
+histview() {
+  DAY=$(echo "$1" | grep -Eo '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
+  while read -r line
+  do
+    echo "$DAY | $line"
+  done < "$HOME/.logs/${1}"
+}
+
+# view zsh history from ever. This can be called like `ever called echo`
+ever() {
+  if [ "$1" == "called" ]; then
+    if [ "$2" == "here" ]; then
+      ever | grep "$(pwd) "
+    elif [ "$2" == "below" ]; then
+      ever | grep "$(pwd)"
+    elif [ "$2" == "in" ]; then
+      #if this is a relative directory, append pwd to it
+      match=$3
+      if [[ "$3" != "/"* ]] && [[ "$3" != "~"* ]]; then
+        match="$(pwd)/$"
+      fi
+      ever | grep "$match "
+    else
+      ever | grep ${@:2}
+    fi
+  else
+    for log in $(ls ${HOME}/.logs);do
+      #per line
+      histview "$log"
+    done
+  fi
+  #cat ~/.logs/zsh-history-*.log
+}
+# view zsh history from today
+today() {
+  cat ~/.logs/zsh-history-$(date "+%Y-%m-%d").log
+}
+# Search the recent history
+called() {
+  if [ "$1" == "here" ]; then
+    today | grep "$(pwd) "
+  elif [ "$1" == "below" ]; then
+    today | grep "$(pwd)"
+  elif [ "$1" == "in" ]; then
+    #if this is a relative directory, append pwd to it
+    match=$2
+    if [[ "$2" != "/"* ]] && [[ "$2" != "~"* ]]; then
+      match="$(pwd)/$2"
+    fi
+    today | grep "$match "
+  else
+    today | grep ${@}
+  fi
+}
+
+alias mse="wine /home/keenan/Installs/M15-Magic-Pack-main/mse.exe"
+
+alias godev="cd ~/Dev"
+
+# Git colors
+git config --global color.ui true
+git config --global color.diff-highlight.oldNormal    "red bold"
+git config --global color.diff-highlight.oldHighlight "red bold 52"
+git config --global color.diff-highlight.newNormal    "green bold"
+git config --global color.diff-highlight.newHighlight "green bold 22"
+git config --global color.diff.meta       "11"
+git config --global color.diff.frag       "magenta bold"
+git config --global color.diff.func       "146 bold"
+git config --global color.diff.commit     "yellow bold"
+git config --global color.diff.old        "red bold"
+git config --global color.diff.new        "green bold"
+git config --global color.diff.whitespace "red reverse"
+
+runlast() {
+    $1 $(fc -ln -2 | awk '{print $NF}')
+}
+
+#and() {
+#    local command="$*"
+#     eval "${command// and / && }"
+#}
+#alias and='eval "$(echo "$*" | sed "s/ and / && /g")"'
+
+wh() {
+    # Default settings
+    local max_depth=5
+    local count_threshold=40
+    local show_hidden=false
+    local size_sort=false
+    local force_depth=""
+    local full_depth=false
+    local dir=""
+
+    # Parse options
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -d|--depth)
+                force_depth="$2"
+                shift 2
+                ;;
+            -c|--count)
+                count_threshold="$2"
+                shift 2
+                ;;
+            -a|--all)
+                show_hidden=true
+                shift
+                ;;
+            -s|--sort)
+                size_sort=true
+                shift
+                ;;
+            -f|--full)
+                full_depth=true
+                count_threshold=1000000
+                shift
+                ;;
+            -h|--help)
+                echo "Usage: whatshere [-d|--depth depth] [-c|--count count_threshold] [-a|--all] [-h|--help] [-s|--sort] [directory]"
+                echo "  -d, --depth depth: Force a specific depth"
+                echo "  -c, --count count: Set the count threshold (default: 1000)"
+                echo "  -a, --all: Show hidden files"
+                echo "  -h, --help: Show this help message"
+                echo "  -s, --sort: Sort by size (largest first)"
+                return 0
+                ;;
+            *)
+                dir="$1"
+                shift
+                ;;
+        esac
+    done
+
+    # Get the directory to analyze (current directory if not specified)
+    dir="${dir:-.}"
+
+    # Function to count items at a specific depth
+    count_at_depth() {
+        local depth=$1
+        local count_cmd
+
+        if $show_hidden; then
+            count_cmd="find '$dir' -mindepth $depth -maxdepth $depth | wc -l"
+        else
+            count_cmd="find '$dir' -mindepth $depth -maxdepth $depth -not -path '*/\.*' | wc -l"
+        fi
+
+        eval "$count_cmd"
+    }
+
+    # Determine the optimal depth
+    local depth=0
+    local total_count=0
+    while true; do
+        ((depth++))
+        local level_count=$(count_at_depth $depth)
+        total_count=$((total_count + level_count))
+
+        if [ $depth -ge $max_depth ] || [ $level_count -eq 0 ] || [ $total_count -ge $count_threshold ]; then
+            [ $depth -ge $max_depth ] #&& echo "  - Max depth reached"
+            [ $level_count -eq 0 ] #&& echo "  - No more items at this level"
+            [ $total_count -ge $count_threshold ] #&& echo "  - Total count threshold reached"
+            ((depth--))  # Decrement depth by 1
+            break
+        fi
+    done
+
+    # Use forced depth if specified
+    if [ -n "$force_depth" ]; then
+        depth=$force_depth
+    fi
+
+    # Ensure depth is at least 1
+    depth=$((depth > 0 ? depth : 1))
+
+    # Prepare tree options
+    local tree_opts=("-L" "$depth")
+    $show_hidden && tree_opts+=("-a")
+    $size_sort && tree_opts+=("--sort=size" "--dirsfirst")
+
+
+    # Run tree with the determined depth and options
+    tree "${tree_opts[@]}" "$dir"
+}
+
+alias whh="wh -a"
+alias whf="wh -f"
+
+# Translating fortunes lol
+
+fortuna() {
+    # Get the Spanish fortune
+    spanish_fortune=$(fortune ~/Dev/utils/bash/fortunes/es)
+
+    # Print the Spanish fortune
+    echo "$spanish_fortune"
+
+    spanish_fortune=$(echo "$spanish_fortune" | tr '\n' ' ')
+
+    # Translate and print the English translation
+    trans es:en --brief "$spanish_fortune"
+}
+
+# Call the function
+# spanish_fortune_with_translation
+
+# Another function
+source ~/Dev/utils/bash/.analyze_jsonl.sh
+
+# Python development environment setup
+source ~/Dev/utils/bash/newpydir.sh
+
+# Content
+alias thenews='http https://www.bloomberg.com/ | html2markdown | cat | aichat "Summarize the headlines for today. Focus on finance and science. Include links."'
+
+# More for aichat and aider
+alias aichatter='aichat -s'
+alias whatcommand='aichat -e'
+alias aiderchat='aider --chat-mode ask'
+alias aiderm='aider --message'
+# Top of the chart as of Feb 3, 2025, https://aider.chat/docs/leaderboards/
+alias aiderr1='aider --architect --model openrouter/deepseek/deepseek-r1 --editor-model sonnet'
+alias aiderlocal='aider --subtree-only'
+alias myaider='aidermyaider'  # Installed with `pipx install --suffix myaider --editable .` from Dev/aider
+
+# For the raspberry Pi server
+# Connect to Pi with tmux session
+# Usage: pi-tmux [session_name]
+# Note! This relies on having a .ssh/config file set up, and note that the host name of the Pi might be"andrews-raspberrypi"
+goraspberry() {
+    tailscale status >/dev/null 2>&1 || sudo tailscale up
+
+    # Set default session name if not provided
+    local session=${1:-mysession}
+
+    # Display connecting message
+    echo "Connecting to Pi with tmux session: $session"
+
+    # Connect to Pi and attach to existing session or create new one
+    ssh raspberrypi -t "tmux attach -t $session || tmux new -s $session"
+
+    # Show message when connection closes
+    echo "Disconnected from Pi tmux session: $session"
+}
+
+# Prophecy Stuff
+alias k='kubectl'
+alias pods='kubectl get pods -n prophecy'
+alias podslive='pods -w'
+alias kub='kubectl -n prophecy'
+alias logs='pklfloop prophecy edweb'
+alias watch='watch '
+alias code='open -a "Visual Studio Code"'
+alias subl='open -a "Sublime Text"' # open file or folder in sublime e.g. subl ~/.zshrc'
+alias edit='kubectl edit ProphecyCluster -n prophecy'
+alias startme='aws ec2 start-instances --region us-west-1 --instance-ids i-00c1038868f5ca661'
+alias letsco='goco && aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 133450206866.dkr.ecr.us-west-1.amazonaws.com && just build && just docker-push && just deploy'
+alias letsgo='letsco && letsed'
+
+# EdWeb build and deploy function
+# See documentation: https://coda.io/d/_dM2HGO1bKMx/How-to-deploy-your-first-Edweb-and-Copilot-code-change-to-your-d_suEi3iOd#_luyPy4rW
+#letsed() {
+#    echo "Use Jenkins to build EdWeb: http://34.125.127.198/job/DeployBackendDev "
+#    echo "Using `sbt`!"
+#    gopro
+#    sbt fmt; sbt editorWeb/Test/compile; aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 133450206866.dkr.ecr.us-west-1.amazonaws.com; sbt editorWeb/docker:publish; pkdel prophecy edweb;  date;
+#}
+
+alias letsed='gopro &&  sbt fmt; sbt editorWeb/Test/compile; aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 133450206866.dkr.ecr.us-west-1.amazonaws.com; sbt editorWeb/docker:publish; pkdel prophecy edweb;  date;'
+
+# Git worktree helper
+worktree() {
+    gopro && if [ -d ~/Dev/prophecy-$1 ]; then
+        cd ~/Dev/prophecy-$1
+    else
+        git worktree add -b andrew/$1 ~/Dev/prophecy-$1 master && cd ~/Dev/prophecy-$1
+    fi
+}
+
+worktreehere() {
+    gopro && if [ -d ~/Dev/prophecy-$1 ]; then
+        cd ~/Dev/prophecy-$1
+    else
+        git worktree add -b andrew/$1 ~/Dev/prophecy-$1 && cd ~/Dev/prophecy-$1
+    fi
+}
+
+# Aider
+export AIDER_MODEL="claude-sonnet-4-20250514"
+export AIDER_WEAK_MODEL="claude-3-5-haiku-20241022"
+export aider="aider --sonnet"
+
+# cologs - Pod log viewer with search, trimming, and character limiting
+#
+# Usage examples:
+#   cologs                    - show all logs, trimmed after traceId/kwargs
+#   cologs foo -c 200         - search for "foo", trim, show first 200 chars
+#   cologs error -c 150       - search for "error", trim, show first 150 chars
+#   cologs --full Agent -c 100 - search for "Agent", no trimming, show first 100 chars
+#   cologs -c 200             - no search, trim, show first 200 chars of all lines
+#   cologs -f                 - follow logs in real-time
+#   cologs 100                - show last 100 lines
+#   cologs 50 -f              - show last 50 lines and follow
+#   cologs error -i           - case insensitive search for "error"
+#   cologs ERROR -i -c 200    - case insensitive search for "ERROR", show first 200 chars
+#   cologs --no-num error     - search for "error" without line numbers
+#   cologs -b edweb           - show logs from edweb pod instead of copilot
+#   cologs -b edweb error     - show logs from edweb pod and search for "error"
+#   cologs all                - list all pods in prophecy namespace
+#
+# Processing order: logs → trim (traceId/kwargs) → cut (character limit) → grep (search)
+function cologs() {
+    # Check for special "all" command first
+    if [[ $1 == "all" ]]; then
+        kubectl get pods -n prophecy
+        return 0
+    fi
+
+    local follow="false"
+    local trim="true"
+    local lines=""
+    local search=""
+    local char_limit=""
+    local case_insensitive="false"
+    local line_numbers="true"
+    local pod_filter="copilot-prophecy"
+
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -f|--follow)
+                follow="true"
+                shift
+                ;;
+            --full)
+                trim="false"
+                shift
+                ;;
+            --lines)
+                lines="$2"
+                shift 2
+                ;;
+            -c)
+                char_limit="$2"
+                shift 2
+                ;;
+            -i)
+                case_insensitive="true"
+                shift
+                ;;
+            --no-num)
+                line_numbers="false"
+                shift
+                ;;
+            -b)
+                pod_filter="$2"
+                shift 2
+                ;;
+            *)
+                # If it's a number, treat it as lines
+                if [[ $1 =~ ^[0-9]+$ ]]; then
+                    lines="$1"
+                elif [[ -z "$search" ]]; then
+                    # First non-option argument is the search term
+                    search="$1"
+                fi
+                shift
+                ;;
+        esac
+    done
+
+    local pod=$(kubectl get pods -n prophecy -o name | grep "$pod_filter" | head -1)
+
+    if [ -z "$pod" ]; then
+        echo "No pod found matching '$pod_filter'"
+        return 1
+    fi
+
+    # Build kubectl command
+    local cmd="kubectl logs -n prophecy \"$pod\""
+    if [ -n "$lines" ]; then
+        cmd="$cmd --tail=\"$lines\""
+    fi
+    if [ "$follow" = "true" ]; then
+        cmd="$cmd -f"
+    fi
+
+    # Build pipeline: logs -> line numbers -> trim -> cut -> grep
+    local pipeline="eval $cmd"
+
+    # Add line numbers FIRST to preserve original log line numbers
+    if [ "$line_numbers" = "true" ]; then
+        pipeline="$pipeline | nl -w4 -s'|'"
+    fi
+
+    # Add trimming
+    if [ "$trim" = "true" ]; then
+        pipeline="$pipeline | sed 's/\[36mtraceId.*/[36mtraceId[0m=[35m...[0m/' | sed 's/kwargs.*/kwargs.../' "
+    fi
+
+    # Add character limit
+    if [ -n "$char_limit" ]; then
+        pipeline="$pipeline | cut -c1-$char_limit"
+    fi
+
+    # Add grep if search term provided
+    if [ -n "$search" ]; then
+        if [ "$case_insensitive" = "true" ]; then
+            pipeline="$pipeline | grep -i \"$search\""
+        else
+            pipeline="$pipeline | grep \"$search\""
+        fi
+    fi
+
+    # Execute the pipeline
+    eval $pipeline
+}
+
+alias edlogs='cologs -b edweb'
+
+export REDACT_SENSITIVE_LOGS=False
+
+export whatimages='kubectl get ProphecyCluster -n prophecy -o yaml | grep image:'
