@@ -29,9 +29,14 @@ alias godown='cd ~/Downloads'
 alias gomess='cd ~/Dev/messingaround'
 alias gopro='cd ~/prophecy'
 alias goco='cd ~/prophecy/copilot'
+alias gomo='cd ~/Dev/mockecy'
+alias gokno='cd ~/Dev/prophecy-knowledge-graph'
 alias histf='history | fzf'
 alias gohere='tmux send-keys -t :.+ C-c "cd $(pwd)" Enter'
 # alias gohere='for pane in $(tmux list-panes -a -F "#{pane_id}"); do tmux send-keys -t $pane C-c "cd $(pwd)" Enter; done'
+
+# Prophecy stuff
+alias loco='gopro && cd python-sandbox && source .venv/bin/activate && export LOG_LEVEL=DEBUG && python3 -m agent.websocket_server'
 
 # Apt
 alias get="sudo apt install -y"
@@ -394,7 +399,7 @@ alias letsgo='letsco && letsed'
 #    sbt fmt; sbt editorWeb/Test/compile; aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 133450206866.dkr.ecr.us-west-1.amazonaws.com; sbt editorWeb/docker:publish; pkdel prophecy edweb;  date;
 #}
 
-alias letsed='gopro &&  sbt fmt; sbt editorWeb/Test/compile; aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 133450206866.dkr.ecr.us-west-1.amazonaws.com; sbt editorWeb/docker:publish; pkdel prophecy edweb;  date;'
+alias letsed='gopro && sbt clean && sbt fmt; sbt editorWeb/Test/compile; aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 133450206866.dkr.ecr.us-west-1.amazonaws.com; sbt editorWeb/docker:publish; pkdel prophecy edweb;  date;'
 
 # Git worktree helper
 worktree() {
@@ -549,3 +554,5 @@ alias edlogs='cologs -b edweb'
 export REDACT_SENSITIVE_LOGS=False
 
 export whatimages='kubectl get ProphecyCluster -n prophecy -o yaml | grep image:'
+
+echo fpath+=$(brew --prefix)/share/zsh/site-functions >> ~/.zshrc

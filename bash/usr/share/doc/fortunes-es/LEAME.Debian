@@ -1,0 +1,42 @@
+fortunes-es para Debian
+----------------------
+ * Buena parte de este paquete está basada en las citas
+   recopiladas en la página "Frases y Proverbios"
+
+     http://www.cantervill.com.ar/fyp
+
+ * El resto del paquete está hecho a partir de una serie de citas y 
+   elementos recolectados por Urko Lusa para su programa 'chorrada'. 
+   Para más información, véase
+
+     http://www.arrakis.es/~ulusa/linux/chorrada.html
+
+ * Aunque se ha intentado que todas las citas sean de dominio público, 
+   es posible que se haya colado alguna que no lo sea. En tal caso, 
+   se ruega comunicárselo a la persona que ha empaquetado las fortunes, 
+   para que sea eliminada de las mismas.
+ 
+============================================================
+Versión en castellano de los comentarios de Urko Lusa:
+============================================================
+Estos son los archivos de citas:
+
+Deprimente: Unas unas 60 citas (4Kb) de carácter especialmente "alegre".
+
+Misógino: 110 citas y chistes misóginos (5Kb), para "esos" momentos. 
+     Políticamente incorrecto, incluso. Obtenidos de la guarida del juguetón. 
+
+Azafra: Más de 400 citas (10Kb) contribuídas por Adolfo Rueda. Son de una 
+     línea, por lo que son apropiadas para usarse de "taglines". 
+
+Refranes: Más de 800 refranes (14Kb) obtenidos de Cyberferia. 
+
+Azafra2: Otros 200 y pico "taglines" (6Kb) gentileza de Adolfo Rueda, quien 
+     los ha tomado prestados de Fido
+
+Ulusa: Unas 200 citas (11Kb) que he ido recopilando por ahí, especialmente 
+     del área de Fido R34.CHISTES. Se advierte que la mayoría son de dudoso 
+     gusto. 
+
+
+*** Maintained by Javier Fernández-Sanguino Peña <jfs@debian.org>

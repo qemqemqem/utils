@@ -1,0 +1,47 @@
+fortunes-es for Debian
+----------------------
+ * The main part of this package is built from fortunes found in 
+
+     http://www.cantervill.com.ar/fyp
+
+   (Frases y proverbios)
+
+ * Other part of the package is built from fortunes collected by 
+   Urko Lusa for his program  'chorrada'. 
+   For additional information, see
+
+     http://www.arrakis.es/~ulusa/linux/chorrada.html
+ 
+ * Some other fortunes have been extracted from online resources
+   such as:
+   - Isaac Asimov's fortunes -> http://lafundacion.webcindario.com/citas.htm
+
+ * All fortunes are supposed to be in the public domain. However, if 
+   a fortune is found not to be in that case, please notify it
+   to the package maintainer, so it can be removed.
+
+
+============================
+Comments from the Urko page:
+============================
+
+Deprimente: (depressive) About 60 citations (4Kb) of a "happy" look.
+
+Misóginous: 110 citations and misogynous jokes (5Kb), for "that" moments. 
+     Politically incorrect. Got from "la guarida del juguetón". 
+
+Azafra: More that 400 citations (10Kb) contributed by Adolfo Rueda. They are
+one line long, so suitable for tag lines.
+
+Refranes: More than 800  (14Kb) got from Cyberferia. 
+
+Azafra2: More than 200 additional "taglines" (6Kb) thanks to  Adolfo Rueda, 
+     who took them from fido. 
+
+Ulusa: About 200 citations (11Kb) recompiled by Urko Lusa from everywhere,
+mainly from Fido area R34.CHISTES. You are warned that most of them are not
+at all politically correct.
+ 
+
+--- Maintained by Javier Fernández-Sanguino Peña <jfs@debian.org>
+

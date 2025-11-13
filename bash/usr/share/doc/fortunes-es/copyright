@@ -1,0 +1,59 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: fortunes-es
+Source: ftp://ftp.debian.org/dists/unstable/main/source/
+
+Files: *
+Copyright: 1999 Agustín Martín Domingo <agmartin@aq.upm.es>
+           2000 Javier Fernandez-Sanguino Peña <jfs@debian.org>
+License: GPL-2+
+ All fortunes' text and quotes are presumed to be in the public domain. However
+ if any non-free fortune is present, please notify it to the package maintainer
+ to remove it.
+
+ This package includes mainly fortunes recopiled at "Frases y Proverbios" 
+ by Roly Canteros:
+ http://www.cantervill.com.ar/fyp
+
+ with recopilator consent, and from fortunes  previously used for Urko Lusa 
+ program 'chorrada', available at:
+ http://www.arrakis.es/~ulusa/linux/chorrada.html
+ [Note: URL no longer available]
+
+ The programs developed in order to recopilate this compendium of software
+ are GPL. The following license applies to the code only (not to the fortunes,
+ see above)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 1, or (at your option)
+    any later version.
+ 
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+ See file /usr/share/common-licenses/GPL in your debian system for more
+ information.
+
+
+Files: debian/*
+Copyright: 2000 Javier Fernández-Sanguino Peña <jfs@debian.org>
+License: GPL-2+
+ This package is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ This package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <https://www.gnu.org/licenses/>
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License version 2 can be found in "/usr/share/common-licenses/GPL-2".
+
+
