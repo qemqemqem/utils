@@ -389,3 +389,12 @@ worktreehere() {
         git worktree add -b andrew/$1 ~/Dev/prophecy-$1 && cd ~/Dev/prophecy-$1
     fi
 }
+
+# Unset old aliases to avoid conflicts with new functions
+unalias letsed 2>/dev/null
+unalias letsco 2>/dev/null  
+unalias letsgo 2>/dev/null
+
+# KUBERNETES DEPLOYMENT COMMANDS
+# Source improved deployment functions with verification and operator-awareness
+source ~/Dev/utils/bash/k8s_deploy.sh

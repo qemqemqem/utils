@@ -30,13 +30,16 @@ alias gomess='cd ~/Dev/messingaround'
 alias gopro='cd ~/prophecy'
 alias goco='cd ~/prophecy/copilot'
 alias gomo='cd ~/Dev/mockecy'
+alias gofro='cd ~/Dev/prophecy-frontend'
 alias gokno='cd ~/Dev/prophecy-knowledge-graph'
+alias gofro='cd ~/Dev/prophecy-frontend'
+alias gosand='gopro && cd python-sandbox'
 alias histf='history | fzf'
 alias gohere='tmux send-keys -t :.+ C-c "cd $(pwd)" Enter'
 # alias gohere='for pane in $(tmux list-panes -a -F "#{pane_id}"); do tmux send-keys -t $pane C-c "cd $(pwd)" Enter; done'
 
 # Prophecy stuff
-alias loco='gopro && cd python-sandbox && source .venv/bin/activate && export LOG_LEVEL=DEBUG && python3 -m agent.websocket_server'
+alias loco='gopro && cd python-sandbox && source .venv/bin/activate && export LOG_FILE=true && LOG_LEVEL=DEBUG && python3 -m agent.websocket_server'
 
 # Apt
 alias get="sudo apt install -y"
@@ -387,19 +390,19 @@ alias code='open -a "Visual Studio Code"'
 alias subl='open -a "Sublime Text"' # open file or folder in sublime e.g. subl ~/.zshrc'
 alias edit='kubectl edit ProphecyCluster -n prophecy'
 alias startme='aws ec2 start-instances --region us-west-1 --instance-ids i-00c1038868f5ca661'
-alias letsco='goco && aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 133450206866.dkr.ecr.us-west-1.amazonaws.com && just build && just docker-push && just deploy'
-alias letsgo='letsco && letsed'
+# OLD DEFINITIONS - Replaced by k8s_deploy.sh
+# alias letsco='goco && aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 133450206866.dkr.ecr.us-west-1.amazonaws.com && just build && just docker-push && just deploy'
+# alias letsgo='letsco && letsed'
+# alias letsed='gopro && sbt clean && sbt fmt; sbt editorWeb/Test/compile; aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 133450206866.dkr.ecr.us-west-1.amazonaws.com; sbt editorWeb/docker:publish; pkdel prophecy edweb;  date;'
 
-# EdWeb build and deploy function
-# See documentation: https://coda.io/d/_dM2HGO1bKMx/How-to-deploy-your-first-Edweb-and-Copilot-code-change-to-your-d_suEi3iOd#_luyPy4rW
-#letsed() {
-#    echo "Use Jenkins to build EdWeb: http://34.125.127.198/job/DeployBackendDev "
-#    echo "Using `sbt`!"
-#    gopro
-#    sbt fmt; sbt editorWeb/Test/compile; aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 133450206866.dkr.ecr.us-west-1.amazonaws.com; sbt editorWeb/docker:publish; pkdel prophecy edweb;  date;
-#}
+# Unset old aliases to avoid conflicts with new functions
+unalias letsed 2>/dev/null
+unalias letsco 2>/dev/null
+unalias letsgo 2>/dev/null
 
-alias letsed='gopro && sbt clean && sbt fmt; sbt editorWeb/Test/compile; aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 133450206866.dkr.ecr.us-west-1.amazonaws.com; sbt editorWeb/docker:publish; pkdel prophecy edweb;  date;'
+# NEW KUBERNETES DEPLOYMENT COMMANDS
+# Source improved deployment functions with verification and operator-awareness
+source ~/Dev/utils/bash/k8s_deploy.sh
 
 # Git worktree helper
 worktree() {
@@ -416,6 +419,202 @@ worktreehere() {
     else
         git worktree add -b andrew/$1 ~/Dev/prophecy-$1 && cd ~/Dev/prophecy-$1
     fi
+}
+
+# Git worktree helper for existing branches
+# Usage: goworktree andrew/mybranch
+goworktree() {
+    if [ -z "$1" ]; then
+        echo "Usage: goworktree <branch-name>"
+        echo "Example: goworktree andrew/mybranch"
+        return 1
+    fi
+
+    # Convert branch name to directory name (replace / with -)
+    local dir_name=$(echo "$1" | sed 's/\//-/g')
+    local worktree_path=~/Dev/prophecy-$dir_name
+
+    gopro && if [ -d "$worktree_path" ]; then
+        echo "Worktree already exists at $worktree_path"
+        cd "$worktree_path"
+    else
+        echo "Creating worktree for existing branch '$1' at $worktree_path"
+        git worktree add "$worktree_path" "$1" && cd "$worktree_path"
+    fi
+}
+
+# Wrapper that ensures you're in prophecy dir first
+# Usage: proworktree andrew/mybranch
+proworktree() {
+    cd ~/prophecy && goworktree "$1"
+}
+
+# Delete the current worktree with safety checks
+# Checks for uncommitted changes and unpushed commits before deleting
+deletecurrentworktree() {
+    # Get the current directory
+    local current_dir=$(pwd)
+
+    # Check if we're in a git repository
+    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        echo "Error: Not in a git repository"
+        return 1
+    fi
+
+    # Get the git root directory
+    local git_root=$(git rev-parse --show-toplevel)
+
+    # Check if this is a worktree (not the main repo)
+    local main_repo_path=~/prophecy
+    if [ "$git_root" = "$main_repo_path" ]; then
+        echo "Error: You are in the main prophecy repository, not a worktree"
+        echo "This command is only for deleting worktrees, not the main repo"
+        return 1
+    fi
+
+    # Get the current branch
+    local branch=$(git branch --show-current 2>/dev/null)
+    [ -z "$branch" ] && branch="(detached HEAD)"
+
+    echo "======================================"
+    echo "Current worktree: $current_dir"
+    echo "Branch: $branch"
+    echo ""
+
+    local has_warnings=false
+
+    # Check for uncommitted changes
+    if [ -n "$(git status --porcelain 2>/dev/null)" ]; then
+        has_warnings=true
+        echo "⚠️⚠️⚠️  WARNING: UNCOMMITTED CHANGES DETECTED!  ⚠️⚠️⚠️"
+        echo ""
+        git status --short
+        echo ""
+    else
+        echo "✓ No uncommitted changes"
+    fi
+
+    # Check for unpushed commits
+    local current_branch=$(git branch --show-current)
+    if [ -n "$current_branch" ]; then
+        local remote_branch=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null)
+
+        if [ -n "$remote_branch" ]; then
+            local unpushed_commits=$(git log "$remote_branch..HEAD" --oneline 2>/dev/null)
+
+            if [ -n "$unpushed_commits" ]; then
+                has_warnings=true
+                echo "⚠️⚠️⚠️  WARNING: UNPUSHED COMMITS DETECTED!  ⚠️⚠️⚠️"
+                echo ""
+                echo "Commits not yet pushed:"
+                echo "$unpushed_commits"
+                echo ""
+            else
+                echo "✓ All commits have been pushed"
+            fi
+        else
+            echo "⚠️  Warning: No remote tracking branch found"
+            echo "   (Cannot determine if commits are pushed)"
+            echo ""
+            has_warnings=true
+        fi
+    fi
+
+    # Ask for confirmation
+    echo ""
+    if [ "$has_warnings" = true ]; then
+        echo "⚠️  There are warnings above. Are you sure you want to delete this worktree?"
+    fi
+    read "response?Delete this worktree and return to main repo? (y/n): "
+
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        # Go back to main repo
+        cd "$main_repo_path" || { echo "Error: Could not cd to main repo"; return 1; }
+
+        # Remove the worktree
+        git worktree remove "$current_dir" 2>/dev/null && echo "✓ Deleted worktree: $current_dir" || echo "✗ Failed to delete worktree"
+    else
+        echo "Cancelled - worktree not deleted"
+    fi
+}
+
+# Clean up old worktrees interactively
+# Lists all worktrees with ages and prompts for deletion of old ones
+# Warns strongly if uncommitted changes exist
+cleanupworktrees() {
+    # Ensure we're in the prophecy repo
+    cd ~/prophecy || { echo "Could not find ~/prophecy"; return 1; }
+
+    echo "Scanning all worktrees..."
+    echo ""
+
+    # Get all worktree paths except the main one
+    git worktree list --porcelain | grep "^worktree " | cut -d' ' -f2- | while IFS= read -r worktree_path; do
+        # Skip the main prophecy directory
+        if [ "$worktree_path" = "$(pwd)" ]; then
+            continue
+        fi
+
+        echo "======================================"
+        echo "Worktree: $worktree_path"
+
+        # Check if directory exists
+        if [ ! -d "$worktree_path" ]; then
+            echo "Skipping: Directory does not exist"
+            echo ""
+            continue
+        fi
+
+        # Get the branch name for this worktree
+        local branch=$(cd "$worktree_path" && git branch --show-current 2>/dev/null)
+        [ -z "$branch" ] && branch="(detached HEAD)"
+        echo "Branch: $branch"
+
+        # Find the most recently modified file to determine age (macOS stat format)
+        local last_modified_timestamp=$(find "$worktree_path" -type f -exec stat -f "%m" {} \; 2>/dev/null | sort -rn | head -1)
+
+        if [ -z "$last_modified_timestamp" ]; then
+            echo "Skipping: Could not determine age"
+            echo ""
+            continue
+        fi
+
+        local current_timestamp=$(date +%s)
+        local age_seconds=$((current_timestamp - last_modified_timestamp))
+        local age_days=$((age_seconds / 86400))
+
+        echo "Last modified: $age_days days ago"
+
+        # Check if older than 14 days
+        if [ $age_days -lt 14 ]; then
+            echo "Skipping: Less than 2 weeks old"
+            echo ""
+            continue
+        fi
+
+        # Check for uncommitted changes
+        if [ -n "$(cd "$worktree_path" && git status --porcelain 2>/dev/null)" ]; then
+            echo ""
+            echo "⚠️⚠️⚠️  WARNING: UNCOMMITTED CHANGES DETECTED!  ⚠️⚠️⚠️"
+            echo ""
+            (cd "$worktree_path" && git status --short)
+            echo ""
+        else
+            echo "Status: Clean (no uncommitted changes)"
+        fi
+
+        # Ask user
+        echo ""
+        read "response?Delete this worktree? (y/n): "
+        if [[ "$response" =~ ^[Yy]$ ]]; then
+            git worktree remove "$worktree_path" 2>/dev/null && echo "✓ Deleted" || echo "✗ Failed to delete"
+        else
+            echo "Skipped by user"
+        fi
+        echo ""
+    done
+
+    echo "Cleanup complete!"
 }
 
 # Aider
@@ -555,4 +754,6 @@ export REDACT_SENSITIVE_LOGS=False
 
 export whatimages='kubectl get ProphecyCluster -n prophecy -o yaml | grep image:'
 
-echo fpath+=$(brew --prefix)/share/zsh/site-functions >> ~/.zshrc
+# REMOVED: This was appending to ~/.zshrc every time - bad!
+# echo fpath+=$(brew --prefix)/share/zsh/site-functions >> ~/.zshrc
+# If you need this, add it manually to ~/.zshrc once

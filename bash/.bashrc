@@ -158,10 +158,4 @@ export PATH="/opt/homebrew/opt/findutils/libexec/gnubin:$PATH"
 
 export KUBECONFIG=~/.kube/config:~/Downloads/andrew-dev-k3s.yaml
 
-
-. "$HOME/.atuin/bin/env"
-eval "$(atuin init bash)"
-
-[[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
-source ~/.bash-preexec.sh
 echo "BASHRC LOADED"

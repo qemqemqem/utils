@@ -124,27 +124,46 @@ virtual_env() {
 }
 
 parse_git_branch() {
-    git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'
+    # Use symbolic-ref for branch name, fall back to short commit hash in detached HEAD
+    git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null
 }
 
 git_status() {
-    # Check if inside a Git repository
-    git rev-parse --is-inside-work-tree &>/dev/null || return
-    
-    # Check for changes
-    local changed_files=$(git diff --name-only 2>/dev/null | wc -l | tr -d ' ')
-    local untracked_files=$(git ls-files --others --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
-    local staged_files=$(git diff --name-only --cached 2>/dev/null | wc -l | tr -d ' ')
-    
-    if [ "$changed_files" -eq 0 ] && [ "$staged_files" -eq 0 ] && [ "$untracked_files" -eq 0 ]; then
+    # Get all status info in a single git call
+    local status_output=$(git status --porcelain 2>/dev/null)
+    local git_exit=$?
+
+    [ $git_exit -ne 0 ] && return
+
+    local staged_count=0
+    local changed_count=0
+    local untracked_count=0
+
+    while IFS= read -r line; do
+        [ -z "$line" ] && continue
+
+        # First char: staging area (M, A, D, R, C = staged change)
+        case "${line:0:1}" in
+            [MADRC]) ((staged_count++)) ;;
+        esac
+
+        # Second char: working tree (M, D = modified/deleted)
+        case "${line:1:1}" in
+            [MD]) ((changed_count++)) ;;
+        esac
+
+        # Untracked files (start with ??)
+        if [[ "$line" == "??"* ]]; then
+            ((untracked_count++))
+        fi
+    done <<< "$status_output"
+
+    if [ "$staged_count" -eq 0 ] && [ "$changed_count" -eq 0 ] && [ "$untracked_count" -eq 0 ]; then
         echo -n ""  # Repo is clean
     else
-        # Display the number of staged files
-        [ "$staged_files" -ne 0 ] && echo -n "${staged_files}s"
-        # Display the number of changed files  
-        [ "$changed_files" -ne 0 ] && echo -n "${changed_files}c"
-        # Display the number of untracked files
-        [ "$untracked_files" -ne 0 ] && echo -n "${untracked_files}u"
+        [ "$staged_count" -ne 0 ] && echo -n "${staged_count}s"
+        [ "$changed_count" -ne 0 ] && echo -n "${changed_count}c"
+        [ "$untracked_count" -ne 0 ] && echo -n "${untracked_count}u"
     fi
 }
 
