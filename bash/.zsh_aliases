@@ -421,7 +421,7 @@ worktreehere() {
     fi
 }
 
-# Git worktree helper for existing branches
+# Git worktree helper for existing or new branches
 # Usage: goworktree andrew/mybranch
 goworktree() {
     if [ -z "$1" ]; then
@@ -438,8 +438,22 @@ goworktree() {
         echo "Worktree already exists at $worktree_path"
         cd "$worktree_path"
     else
-        echo "Creating worktree for existing branch '$1' at $worktree_path"
-        git worktree add "$worktree_path" "$1" && cd "$worktree_path"
+        # Check if branch exists
+        if git show-ref --verify --quiet refs/heads/"$1" || git show-ref --verify --quiet refs/remotes/origin/"$1"; then
+            echo "Creating worktree for existing branch '$1' at $worktree_path"
+            git worktree add "$worktree_path" "$1" && cd "$worktree_path"
+        else
+            echo "Branch '$1' does not exist."
+            read -q "REPLY?Create new branch '$1' from master? (y/n) "
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                echo "Creating worktree with new branch '$1' at $worktree_path"
+                git worktree add -b "$1" "$worktree_path" master && cd "$worktree_path"
+            else
+                echo "Aborted."
+                return 1
+            fi
+        fi
     fi
 }
 
