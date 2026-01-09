@@ -114,14 +114,14 @@ _atuin_init() {
   # Save current monitor mode state
   local monitor_was_on=false
   [[ $- == *m* ]] && monitor_was_on=true
-  
+
   # Temporarily disable job control notifications
   set +m
-  
+
   local out
   out="$(atuin init bash)"
   eval "${out}" > /dev/null 2>&1
-  
+
   # Restore monitor mode if it was originally on
   $monitor_was_on && set -m
 }
@@ -129,6 +129,9 @@ _atuin_init
 
 # Alias definitions.
 source ~/Dev/utils/bash/.bash_aliases
+
+# Python development utilities
+source ~/Dev/utils/bash/newpydir.sh
 
 # Where the actual PS1 variable is set
 source ~/Dev/utils/bash/.bash_ps1

@@ -79,7 +79,17 @@ alias clip='xclip -selection clipboard'
 pythonheretoo() {
     export PYTHONPATH=$PYTHONPATH:.
 }
-alias venvo='source venv/bin/activate'
+# Smart venv activation - checks for .venv first, then venv
+venvo() {
+    if [ -f ".venv/bin/activate" ]; then
+        source .venv/bin/activate
+    elif [ -f "venv/bin/activate" ]; then
+        source venv/bin/activate
+    else
+        echo "No virtual environment found (.venv/bin/activate or venv/bin/activate)"
+        return 1
+    fi
+}
 alias acto='pythonheretoo && venvo'
 alias py='python'
 
@@ -365,3 +375,35 @@ alias claude-api='ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY claude'
 alias claude-pro='unset ANTHROPIC_API_KEY && claude'
 alias claude='claude-pro'
 
+alias reqme='pip install -r requirements.txt'
+
+# Amazing Marvin MCP Integration
+amazing() {
+    local pushed=false
+
+    # Check if we're already in the amazing directory to avoid nested pushd
+    if [[ "$PWD" != "$HOME/Dev/amazing" ]]; then
+        pushd ~/Dev/amazing > /dev/null || return 1
+        pushed=true
+    fi
+
+    echo "🚀 Launching Claude Code with Amazing Marvin MCP integration..."
+    
+    # Check if .env file exists and has API token
+    if [[ ! -f ".env" ]] || ! grep -q "MARVIN_API_TOKEN=" .env; then
+        echo "⚠️  Setup required: Please add your Amazing Marvin API token to .env"
+        echo "📋 Check SETUP.md for instructions"
+        echo
+    fi
+    
+    echo
+
+    # Launch Claude Code with specific instructions about Amazing Marvin integration
+    claude --append-system-prompt="I have access to your Amazing Marvin task management system through a powerful MCP integration with 28 tools. The most important tool is get_daily_productivity_overview() which gives a comprehensive view of your tasks, projects, and productivity. Help me understand my current tasks, priorities, and what I should focus on. Documentation is available in the current directory."
+
+    # Pop back to original directory after Claude Code closes
+    if [[ "$pushed" == "true" ]]; then
+        popd > /dev/null
+        echo "📂 Returned to original directory"
+    fi
+}
