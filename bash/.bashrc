@@ -95,8 +95,10 @@ export PATH=$PATH:$(go env GOROOT)/bin:$(go env GOPATH)/bin
 
 
 # THE FOLLOWING STUFF ONLY HAPPENS IF IT'S IN A REAL INTERACTIVE TERMINAL
-shopt -q login_shell || return
-# echo "Interactive Mode"
+# Load heavy tools only in real interactive terminals, not subshells or scripts
+if [[ ! -t 0 || -z "$TERM" || "$TERM" == "dumb" ]]; then
+    return
+fi
 
 
 
@@ -114,14 +116,14 @@ _atuin_init() {
   # Save current monitor mode state
   local monitor_was_on=false
   [[ $- == *m* ]] && monitor_was_on=true
-  
+
   # Temporarily disable job control notifications
   set +m
-  
+
   local out
   out="$(atuin init bash)"
   eval "${out}" > /dev/null 2>&1
-  
+
   # Restore monitor mode if it was originally on
   $monitor_was_on && set -m
 }
@@ -129,6 +131,9 @@ _atuin_init
 
 # Alias definitions.
 source ~/Dev/utils/bash/.bash_aliases
+
+# Python development utilities
+source ~/Dev/utils/bash/newpydir.sh
 
 # Where the actual PS1 variable is set
 source ~/Dev/utils/bash/.bash_ps1
@@ -160,3 +165,9 @@ fi
 
 # This is for npm
 export PATH=~/.npm-global/bin:$PATH
+
+# For `brew`
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# Flutter
+export PATH="$HOME/flutter/bin:$PATH"
