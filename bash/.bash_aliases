@@ -392,14 +392,12 @@ amazing() {
     fi
 
     echo "🚀 Launching Claude Code with Amazing Marvin MCP integration..."
-
     # Check if .env file exists and has API token
     if [[ ! -f ".env" ]] || ! grep -q "MARVIN_API_TOKEN=" .env; then
         echo "⚠️  Setup required: Please add your Amazing Marvin API token to .env"
         echo "📋 Check SETUP.md for instructions"
         echo
     fi
-
     echo
 
     # Launch Claude Code with specific instructions about Amazing Marvin integration
