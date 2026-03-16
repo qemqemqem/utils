@@ -102,6 +102,10 @@ fi
 
 
 
+# FZF
+# ---
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
 # Ble.sh
 # https://github.com/akinomyoga/ble.sh
 source ~/Installs/ble.sh/out/ble.sh
