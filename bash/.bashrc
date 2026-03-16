@@ -93,13 +93,12 @@ export PATH=$PATH:/usr/local/go/bin
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH=$PATH:$(go env GOROOT)/bin:$(go env GOPATH)/bin
 
-# Tailscale
-sudo tailscale up
-
 
 # THE FOLLOWING STUFF ONLY HAPPENS IF IT'S IN A REAL INTERACTIVE TERMINAL
-shopt -q login_shell || return
-# echo "Interactive Mode"
+# Load heavy tools only in real interactive terminals, not subshells or scripts
+if [[ ! -t 0 || -z "$TERM" || "$TERM" == "dumb" ]]; then
+    return
+fi
 
 
 
@@ -108,20 +107,33 @@ shopt -q login_shell || return
 source ~/Installs/ble.sh/out/ble.sh
 bleopt prompt_eol_mark='⏎'
 # Per https://github.com/akinomyoga/ble.sh#28-fzf-integration
-# ble-import -d integration/fzf-completion
-# ble-import -d integration/fzf-key-bindings
+ble-import -d integration/fzf-completion
+ble-import -d integration/fzf-key-bindings
 
 # Atuin with Ble.sh
 # eval "$(atuin init bash)"
 _atuin_init() {
+  # Save current monitor mode state
+  local monitor_was_on=false
+  [[ $- == *m* ]] && monitor_was_on=true
+
+  # Temporarily disable job control notifications
+  set +m
+
   local out
   out="$(atuin init bash)"
   eval "${out}" > /dev/null 2>&1
+
+  # Restore monitor mode if it was originally on
+  $monitor_was_on && set -m
 }
 _atuin_init
 
 # Alias definitions.
 source ~/Dev/utils/bash/.bash_aliases
+
+# Python development utilities
+source ~/Dev/utils/bash/newpydir.sh
 
 # Where the actual PS1 variable is set
 source ~/Dev/utils/bash/.bash_ps1
@@ -154,15 +166,8 @@ fi
 # This is for npm
 export PATH=~/.npm-global/bin:$PATH
 
-# Override exit command to prevent accidental tmux session termination
-exit() {
-  if [ -n "$TMUX" ]; then
-    echo "You are in a tmux session. Use 'tmux detach' to detach, or 'exit-tmux' to exit the current pane."
-    return 1
-  else
-    builtin exit
-  fi
-}
+# For `brew`
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-# Create the actual exit command
-alias exit-tmux='builtin exit'
+# Flutter
+export PATH="$HOME/flutter/bin:$PATH"

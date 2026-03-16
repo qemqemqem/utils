@@ -22,6 +22,8 @@ alias godown='cd ~/Downloads'
 alias gomess='cd ~/Dev/messingaround'
 alias histf='history | fzf'
 alias gohere='tmux send-keys -t :.+ C-c "cd $(pwd)" Enter'
+alias gomagic='cd ~/Dev/magic-platform'
+alias m2='cd ~/Dev/magic-2'
 # alias gohere='for pane in $(tmux list-panes -a -F "#{pane_id}"); do tmux send-keys -t $pane C-c "cd $(pwd)" Enter; done'
 
 # Apt
@@ -35,6 +37,8 @@ alias pull="git pull"
 alias checkout="git checkout"
 alias ga="git add -A"
 alias commit="git commit -am"
+alias commitall="ga && commit"
+alias ca="commitall"
 alias undocommit="git reset --soft HEAD~1"
 # commit() {
   # # To allow commit messages without quotes around them
@@ -79,7 +83,17 @@ alias clip='xclip -selection clipboard'
 pythonheretoo() {
     export PYTHONPATH=$PYTHONPATH:.
 }
-alias venvo='source venv/bin/activate'
+# Smart venv activation - checks for .venv first, then venv
+venvo() {
+    if [ -f ".venv/bin/activate" ]; then
+        source .venv/bin/activate
+    elif [ -f "venv/bin/activate" ]; then
+        source venv/bin/activate
+    else
+        echo "No virtual environment found (.venv/bin/activate or venv/bin/activate)"
+        return 1
+    fi
+}
 alias acto='pythonheretoo && venvo'
 alias py='python'
 
@@ -296,7 +310,6 @@ alias whh="wh -a"
 alias whf="wh -f"
 
 # Translating fortunes lol
-#!/bin/bash
 
 fortuna() {
     # Get the Spanish fortune
@@ -341,18 +354,58 @@ alias aiderr1='aider --architect --model openrouter/deepseek/deepseek-r1 --edito
 alias aiderlocal='aider --subtree-only'
 alias myaider='aidermyaider'  # Installed with `pipx install --suffix myaider --editable .` from Dev/aider
 
-# Help function for Pi tmux differences
-pi-help() {
-    echo -e "\n\033[1;31m=== Pi tmux Differences ===\033[0m"
-    echo -e "  • \033[1;36mShift+Arrow\033[0m - Move between panes (instead of Alt+Arrow)"
-    echo -e "  • \033[1;36mCtrl+b\033[0m - Pi's prefix (instead of Ctrl+a)"
-    
-    echo -e "\n\033[1;33mLeaving Safely:\033[0m"
-    echo -e "  • \033[1;36mCtrl+b d\033[0m - Detach (preserves session)"
-    echo -e "  • \033[1;36mexit-tmux\033[0m - Use instead of 'exit' to close pane"
-    echo -e "  • Regular 'exit' command is disabled in tmux"
-    
-    echo -e "\n\033[1;33mVisual Cues:\033[0m"
-    echo -e "  • Red status bar indicates you're on the Pi server"
-    echo -e "  • Berry emoji 🍓 in status bar (instead of bird 🐦)\n"
+# For the raspberry Pi server
+# Connect to Pi with tmux session
+# Usage: pi-tmux [session_name]
+# Note! This relies on having a .ssh/config file set up, and note that the host name of the Pi might be"andrews-raspberrypi"
+goraspberry() {
+    tailscale status >/dev/null 2>&1 || sudo tailscale up
+
+    # Set default session name if not provided
+    local session=${1:-mysession}
+
+    # Display connecting message
+    echo "Connecting to Pi with tmux session: $session"
+
+    # Connect to Pi and attach to existing session or create new one
+    ssh raspberrypi -t "tmux attach -t $session || tmux new -s $session"
+
+    # Show message when connection closes
+    echo "Disconnected from Pi tmux session: $session"
+}
+
+# Claude Code
+alias claude-api='ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY claude'
+alias claude-pro='unset ANTHROPIC_API_KEY && claude'
+alias claude='claude-pro'
+
+alias reqme='pip install -r requirements.txt'
+
+# Amazing Marvin MCP Integration
+amazing() {
+    local pushed=false
+
+    # Check if we're already in the amazing directory to avoid nested pushd
+    if [[ "$PWD" != "$HOME/Dev/amazing" ]]; then
+        pushd ~/Dev/amazing > /dev/null || return 1
+        pushed=true
+    fi
+
+    echo "🚀 Launching Claude Code with Amazing Marvin MCP integration..."
+    # Check if .env file exists and has API token
+    if [[ ! -f ".env" ]] || ! grep -q "MARVIN_API_TOKEN=" .env; then
+        echo "⚠️  Setup required: Please add your Amazing Marvin API token to .env"
+        echo "📋 Check SETUP.md for instructions"
+        echo
+    fi
+    echo
+
+    # Launch Claude Code with specific instructions about Amazing Marvin integration
+    claude --append-system-prompt="I have access to your Amazing Marvin task management system through a powerful MCP integration with 28 tools. The most important tool is get_daily_productivity_overview() which gives a comprehensive view of your tasks, projects, and productivity. Help me understand my current tasks, priorities, and what I should focus on. Documentation is available in the current directory."
+
+    # Pop back to original directory after Claude Code closes
+    if [[ "$pushed" == "true" ]]; then
+        popd > /dev/null
+        echo "📂 Returned to original directory"
+    fi
 }

@@ -3,12 +3,18 @@
 # Function to set up a Python development environment
 # with venv and direnv configuration
 newpydir() {
-    # Check if venv directory exists
-    if [ ! -d "./venv" ]; then
-        echo "Creating new Python virtual environment..."
-        python3 -m venv ./venv
+    # Determine which venv directory to use (prefer .venv, support venv)
+    local venv_dir
+    if [ -d "./.venv" ]; then
+        venv_dir=".venv"
+        echo "Using existing .venv directory."
+    elif [ -d "./venv" ]; then
+        venv_dir="venv"
+        echo "Using existing venv directory."
     else
-        echo "Virtual environment already exists."
+        venv_dir=".venv"
+        echo "Creating new Python virtual environment in .venv..."
+        python3 -m venv ./.venv
     fi
 
     # Create or update .envrc file for direnv
@@ -17,9 +23,9 @@ newpydir() {
 export PYTHONPATH=\$PYTHONPATH:.
 
 # Properly activate the virtual environment
-source venv/bin/activate
-export VIRTUAL_ENV=\$(pwd)/venv
-export PATH=\$(pwd)/venv/bin:\$PATH
+source ${venv_dir}/bin/activate
+export VIRTUAL_ENV=\$(pwd)/${venv_dir}
+export PATH=\$(pwd)/${venv_dir}/bin:\$PATH
 EOF
 
     # Allow direnv to load the new .envrc file
