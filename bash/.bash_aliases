@@ -35,11 +35,15 @@ alias gs="git status && git diff --stat && gitcheck"
 alias push="git push -u origin"
 alias pull="git pull"
 alias checkout="git checkout"
+alias co="checkout"
+alias checkmain="git checkout main"
+alias checknew="git checkout -b"
 alias ga="git add -A"
 alias commit="git commit -am"
 alias commitall="ga && commit"
 alias ca="commitall"
 alias undocommit="git reset --soft HEAD~1"
+alias gitrecent="git branch --sort=-committerdate"
 # commit() {
   # # To allow commit messages without quotes around them
   # git add -A
