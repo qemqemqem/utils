@@ -26,6 +26,10 @@ alias gomagic='cd ~/Dev/magic-platform'
 alias m2='cd ~/Dev/magic-2'
 # alias gohere='for pane in $(tmux list-panes -a -F "#{pane_id}"); do tmux send-keys -t $pane C-c "cd $(pwd)" Enter; done'
 
+# System management
+alias whyslow='~/Dev/utils/bash/whyslow.sh'
+
+
 # Apt
 alias get="sudo apt install -y"
 
