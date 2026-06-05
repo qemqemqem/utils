@@ -29,6 +29,22 @@ alias m2='cd ~/Dev/magic-2'
 # System management
 alias whyslow='~/Dev/utils/bash/whyslow.sh'
 
+# CPU package power limit (PL1) in watts, via MMIO RAPL — raise to defeat the ~6W
+# firmware throttle. LENOVO-SPECIFIC: relies on the Lenovo/ThinkPad EC's MMIO RAPL
+# path and the cpu-powerlimit.service workaround; not portable to other vendors.
+# Higher W = faster + hotter. Boot/resume default is 20W; changes here last until
+# reboot/resume.
+#   cpupl1 40     set PL1 to 40W (e.g. before a heavy build)
+cpupl1() {
+    local w="${1:?usage: cpupl1 <watts>  (e.g. cpupl1 40)}"
+    local f=/sys/class/powercap/intel-rapl-mmio:0/constraint_0_power_limit_uw
+    echo "$(( w * 1000000 ))" | sudo tee "$f" >/dev/null \
+        && echo "PL1 set to ${w}W (temporary — reverts to 20W on reboot/resume)"
+}
+alias cpupowerlow='cpupl1 10'
+alias cpupowerhigh='cpupl1 30'
+alias cpupowermax='cpupl1 44'
+
 
 # Apt
 alias get="sudo apt install -y"
