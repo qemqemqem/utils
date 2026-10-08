@@ -171,7 +171,7 @@ fi
 export PATH=~/.npm-global/bin:$PATH
 
 # For `brew`
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+[ -x /home/linuxbrew/.linuxbrew/bin/brew ] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 # Flutter
 export PATH="$HOME/flutter/bin:$PATH"
