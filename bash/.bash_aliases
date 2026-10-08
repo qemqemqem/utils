@@ -32,18 +32,44 @@ alias whyslow='~/Dev/utils/bash/whyslow.sh'
 # CPU package power limit (PL1) in watts, via MMIO RAPL — raise to defeat the ~6W
 # firmware throttle. LENOVO-SPECIFIC: relies on the Lenovo/ThinkPad EC's MMIO RAPL
 # path and the cpu-powerlimit.service workaround; not portable to other vendors.
-# Higher W = faster + hotter. Boot/resume default is 20W; changes here last until
+# Higher W = faster + hotter. Boot/resume default is 25W; changes here last until
 # reboot/resume.
 #   cpupl1 40     set PL1 to 40W (e.g. before a heavy build)
 cpupl1() {
     local w="${1:?usage: cpupl1 <watts>  (e.g. cpupl1 40)}"
     local f=/sys/class/powercap/intel-rapl-mmio:0/constraint_0_power_limit_uw
+    local was_uw was_w
+    was_uw=$(cat "$f" 2>/dev/null)
+    was_w=$(( was_uw / 1000000 ))
     echo "$(( w * 1000000 ))" | sudo tee "$f" >/dev/null \
-        && echo "PL1 set to ${w}W (temporary — reverts to 20W on reboot/resume)"
+        && echo "PL1 ${was_w}W -> ${w}W (temporary — reverts to 25W on reboot/resume)"
 }
 alias cpupowerlow='cpupl1 10'
-alias cpupowerhigh='cpupl1 30'
+alias cpupowermid='cpupl1 20'
+alias cpupowerhigh='cpupl1 25'
 alias cpupowermax='cpupl1 44'
+
+# Battery-saving mode for travel: balanced platform profile, PL1 12W, built-in screen 35%.
+# Temporary — TLP resets the profile on plug/unplug; PL1 reverts on reboot/resume.
+# Undo: cpupowerhigh (or cpupowermax before a call).
+cpupowertravel() {
+    echo balanced | sudo tee /sys/firmware/acpi/platform_profile >/dev/null \
+        && echo "platform_profile -> balanced"
+    cpupl1 12
+    local svc=org.kde.ScreenBrightness d max
+    for d in $(qdbus6 $svc /org/kde/ScreenBrightness org.kde.ScreenBrightness.DisplaysDBusNames); do
+        [ "$(qdbus6 $svc /org/kde/ScreenBrightness/$d org.kde.ScreenBrightness.Display.IsInternal)" = true ] || continue
+        max=$(qdbus6 $svc /org/kde/ScreenBrightness/$d org.kde.ScreenBrightness.Display.MaxBrightness)
+        qdbus6 $svc /org/kde/ScreenBrightness/$d org.kde.ScreenBrightness.Display.SetBrightness $(( max * 35 / 100 )) 0 \
+            && echo "built-in screen brightness -> 35%"
+    done
+}
+
+# Battery charge cap. Normally TLP holds it at 75-80% (/etc/tlp.d/60-charge-threshold.conf)
+# to save battery wear while docked. battfull = charge to 100% (e.g. before travel);
+# lasts until reboot or battcap.
+alias battfull='sudo tlp fullcharge'
+alias battcap='sudo tlp setcharge'
 
 
 # Apt
@@ -377,6 +403,13 @@ alias aiderm='aider --message'
 alias aiderr1='aider --architect --model openrouter/deepseek/deepseek-r1 --editor-model sonnet'
 alias aiderlocal='aider --subtree-only'
 alias myaider='aidermyaider'  # Installed with `pipx install --suffix myaider --editable .` from Dev/aider
+
+# Attach to a local named tmux session, creating it if it doesn't exist
+# Usage: tm [session_name]  (defaults to "main")
+tm() {
+    local session=${1:-main}
+    tmux attach -t "$session" 2>/dev/null || tmux new -s "$session"
+}
 
 # For the raspberry Pi server
 # Connect to Pi with tmux session

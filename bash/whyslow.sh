@@ -51,6 +51,15 @@ pcolor() {
     echo "$c"
 }
 
+# Helpers: KB -> "1.2G"/"340M", seconds -> "45m"/"5h"/"3d"
+human_kb() { awk -v k="$1" 'BEGIN{ if (k >= 1048576) printf "%.1fG", k/1048576; else printf "%dM", k/1024 }'; }
+human_age() {
+    local s=$1
+    if   [[ $s -lt 3600 ]];  then echo "$(( s / 60 ))m"
+    elif [[ $s -lt 86400 ]]; then echo "$(( s / 3600 ))h"
+    else                          echo "$(( s / 86400 ))d"; fi
+}
+
 # I/O wait — disk-bound stalls that show up as low CPU% but a frozen machine
 iowait=$(echo "$cpu_line" | awk -F',' '{for(i=1;i<=NF;i++) if($i ~ /wa/) {gsub(/[^0-9.]/,"",$i); print $i}}')
 iowait=${iowait:-0}
@@ -77,16 +86,22 @@ if [[ -n "$freq_cur" && -n "$freq_max" && ${freq_max:-0} -gt 0 ]]; then
     [[ ${cpu_int:-0} -ge 50 && $freq_pct -lt 40 ]] && freq_color="red"
 fi
 
-# Thermal throttle events since the last run (delta of the lifetime counter)
+# Thermal/PROCHOT throttle activity — live rate (events/sec) sampled over 1s.
+# This counter ticks on brief limit touches that are harmless during normal
+# boost-to-limit, so it's flagged red ONLY when it's actually holding the clock
+# down (CPU busy but clocked well below max). Otherwise it's a neutral readout.
 throttle_note=""
-throttle_now=$(cat /sys/devices/system/cpu/cpu0/thermal_throttle/core_throttle_count 2>/dev/null)
-throttle_file="/tmp/.whyslow_throttle"
-if [[ -n "$throttle_now" ]]; then
-    throttle_prev=$(cat "$throttle_file" 2>/dev/null)
-    echo "$throttle_now" > "$throttle_file"
-    if [[ -n "$throttle_prev" && $throttle_now -gt $throttle_prev ]]; then
-        throttle_note=" ⚠$(( throttle_now - throttle_prev )) throttle since last run"
-        freq_color="red"
+tcf=/sys/devices/system/cpu/cpu0/thermal_throttle/core_throttle_count
+if [[ -r "$tcf" ]]; then
+    t1=$(cat "$tcf"); sleep 1; t2=$(cat "$tcf")
+    trate=$(( t2 - t1 ))
+    if [[ $trate -gt 0 ]]; then
+        if [[ ${cpu_int:-0} -ge 50 && ${freq_pct:-100} -lt 70 ]]; then
+            throttle_note=" ⚠ throttling ${trate}/s — limiting clock"
+            freq_color="red"
+        else
+            throttle_note=" (throttle ${trate}/s, not limiting)"
+        fi
     fi
 fi
 
@@ -102,7 +117,8 @@ swap_line=""
 if [[ ${swap_total:-0} -gt 0 ]]; then
     swap_pct=$(( swap_used * 100 / swap_total ))
     if [[ $swap_pct -ge 10 ]]; then
-        swap_line="  [$(pcolor "$swap_pct" 10 50)]Swap: ${swap_used}M / ${swap_total}M (${swap_pct}%)[/]"
+        # swap_line="  [$(pcolor "$swap_pct" 10 50)]Swap: ${swap_used}M / ${swap_total}M (${swap_pct}%)[/]"
+        swap_line="  [green]Swap: ${swap_used}M / ${swap_total}M (${swap_pct}%)[/]"
     fi
 fi
 
@@ -111,6 +127,22 @@ read disk_pct disk_avail < <(df -h / | awk 'NR==2 {gsub(/%/,"",$5); print $5, $4
 disk_line=""
 if [[ ${disk_pct:-0} -ge 85 ]]; then
     disk_line="  [$(pcolor "$disk_pct" 85 95)]Disk /: ${disk_pct}% used (${disk_avail} free)[/]"
+fi
+
+# Files in RAM — tmpfs mounts (/tmp, /dev/shm, ...) live entirely in memory and only
+# shrink when files are deleted. Surfaced when one holds >=100MB; colored by share of RAM.
+mem_total_kb=$(awk '/^MemTotal:/ {print $2}' /proc/meminfo)
+tmpfs_mounts=(); tmpfs_parts=""; tmpfs_kb=0
+while read -r target used_kb; do
+    [[ $used_kb -ge 102400 ]] || continue
+    tmpfs_mounts+=("$target")
+    tmpfs_kb=$(( tmpfs_kb + used_kb ))
+    tmpfs_parts+="${tmpfs_parts:+ | }${target} $(human_kb "$used_kb")"
+done < <(df -k --output=target,used -t tmpfs 2>/dev/null | tail -n +2)
+tmpfs_line=""
+if [[ ${#tmpfs_mounts[@]} -gt 0 ]]; then
+    tmpfs_pct=$(( tmpfs_kb * 100 / mem_total_kb ))
+    tmpfs_line="  [$(pcolor "$tmpfs_pct" 10 25)]Files in RAM: ${tmpfs_parts} (${tmpfs_pct}% of RAM)[/]"
 fi
 
 # Power input — USB-C PD negotiation. A low-wattage source power-throttles the
@@ -126,13 +158,50 @@ for d in /sys/class/power_supply/ucsi-source-psy-*; do
     cw=$(awk -v v="$v" -v c="${c:-0}" 'BEGIN{printf "%.0f", (v/1e6)*(c/1e6)}')
     charger_text="${cv}V ${ca}A (~${cw}W in)"
     # Voltage is the capability tell: 5V = 15W-class brick, 9V = partial PD, 15/20V = laptop-class
-    [[ $cv -le 9 ]] && charger_color="yellow"
-    [[ $cv -le 5 ]] && charger_color="red"
+    # [[ $cv -le 9 ]] && charger_color="yellow"
+    # [[ $cv -le 5 ]] && charger_color="red"
     break
 done
 if [[ "$charger_text" == "—" && "$(cat /sys/class/power_supply/AC*/online 2>/dev/null | head -1)" == "0" ]]; then
-    charger_text="on battery"; charger_color="yellow"
+    # charger_text="on battery"; charger_color="yellow"
+    charger_text="on battery"
 fi
+
+# Limits — the levers that actually cap this ThinkPad's clock: the MMIO PL1 power
+# cap (EC can drop it; ~6W = Lap-mode throttle), the platform_profile (fan curve /
+# EC budget; low-power = lazy fan), and the hottest skin sensor (EC clamps the clock
+# at the SEN hot/critical trips, typically 75/80°C).
+pl1_uw=$(cat /sys/class/powercap/intel-rapl-mmio:0/constraint_0_power_limit_uw 2>/dev/null)
+pl1_w=$(( ${pl1_uw:-0} / 1000000 ))
+pl1_color="green"
+[[ $pl1_w -lt 20 ]] && pl1_color="yellow"
+[[ $pl1_w -lt 15 ]] && pl1_color="red"
+profile=$(cat /sys/firmware/acpi/platform_profile 2>/dev/null)
+case "$profile" in
+    performance) profile_color="green" ;;
+    low-power)   profile_color="red" ;;
+    *)           profile_color="yellow" ;;
+esac
+skin_name=""; skin_c=""; skin_hot=""; skin_crit=""
+for z in /sys/class/thermal/thermal_zone*; do
+    [[ "$(cat "$z/type" 2>/dev/null)" == SEN* ]] || continue
+    t=$(( $(cat "$z/temp" 2>/dev/null || echo 0) / 1000 ))
+    if [[ -z "$skin_c" || $t -gt $skin_c ]]; then
+        skin_name=$(cat "$z/type"); skin_c=$t; skin_hot=""; skin_crit=""
+        for p in "$z"/trip_point_*_type; do
+            case "$(cat "$p")" in
+                hot)      skin_hot=$(( $(cat "${p%_type}_temp") / 1000 )) ;;
+                critical) skin_crit=$(( $(cat "${p%_type}_temp") / 1000 )) ;;
+            esac
+        done
+    fi
+done
+skin_text=""
+if [[ -n "$skin_name" ]]; then
+    skin_color=$(pcolor "$skin_c" "${skin_hot:-75}" "${skin_crit:-80}")
+    skin_text=" | [${skin_color}]skin ${skin_name} ${skin_c}°C (trip ${skin_hot:-?}/${skin_crit:-?})[/]"
+fi
+limits_line="  [${pl1_color}]Limits: PL1 ${pl1_w}W[/] | [${profile_color}]profile ${profile:-?}[/]${skin_text}"
 
 # Print System Status header through glow (blue)
 echo "## System Status" | glow -
@@ -143,10 +212,12 @@ status="  [${cpu_color}]CPU: ${cpu_used}% used[/] | [${load_color}]Load: ${load}
   [${temp_color}]Temp: ${temp:-N/A}°C[/]
   [${psi_cpu_color}]Pressure: cpu ${psi_cpu:-?}%[/] | [${psi_mem_color}]mem ${psi_mem:-?}%[/] | [${psi_io_color}]io ${psi_io:-?}%[/]
   [${freq_color}]Clock: ${freq_mhz:-?}MHz / ${freq_maxmhz:-?}MHz (${freq_pct:-?}%, ${governor:-?})${throttle_note}[/]
+${limits_line}
   [${charger_color}]Power: ${charger_text}[/]
   [${iowait_color}]I/O wait: ${iowait}%[/] | [${stuck_color}]Stuck: ${d_count:-0}D / ${z_count:-0}Z[/]"
 [[ -n "$swap_line" ]] && status+=$'\n'"$swap_line"
 [[ -n "$disk_line" ]] && status+=$'\n'"$disk_line"
+[[ -n "$tmpfs_line" ]] && status+=$'\n'"$tmpfs_line"
 
 printf '%s\n\n' "$status" | rich -p --force-terminal -
 
@@ -184,4 +255,19 @@ printf '%s\n\n' "$status" | rich -p --force-terminal -
         parent=$(ps -p $(ps -p "$pid" -o ppid= 2>/dev/null | tr -d ' ') -o comm= 2>/dev/null | head -1)
         printf "| %-20s | %6s | %10s | %-10s | %s |\n" "$cmd" "$ram" "$etime" "$parent" "$pid"
     done
+
+    # RAM files table — biggest top-level entries in the tmpfs mounts flagged above.
+    # "Last change" = newest modification anywhere inside; old = likely safe to clear.
+    if [[ ${#tmpfs_mounts[@]} -gt 0 ]]; then
+        echo ""
+        echo "## Top RAM files"
+        echo "| Path | Size | Last change |"
+        echo "|------|------|-------------|"
+        now=$(date +%s)
+        for m in "${tmpfs_mounts[@]}"; do
+            du -xs --time --time-style=+%s -- "$m"/* "$m"/.[!.]* 2>/dev/null
+        done | sort -rn | awk '$1 >= 51200' | head -10 | while read -r kb mtime path; do
+            printf "| %s | %6s | %s ago |\n" "$path" "$(human_kb "$kb")" "$(human_age $(( now - mtime )))"
+        done
+    fi
 } | glow -
