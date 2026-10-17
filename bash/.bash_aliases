@@ -431,6 +431,21 @@ goraspberry() {
     echo "Disconnected from Pi tmux session: $session"
 }
 
+# For the vaire-pop-os machine (backup while the Pi is flaky)
+# Usage: gocompy [session_name]
+# Note! This relies on the "compy" Host in .ssh/config, pointing at tailscale host "vaire-pop-os"
+gocompy() {
+    tailscale status >/dev/null 2>&1 || sudo tailscale up
+
+    local session=${1:-mysession}
+
+    echo "Connecting to compy with tmux session: $session"
+
+    ssh compy -t "tmux attach -t $session || tmux new -s $session"
+
+    echo "Disconnected from compy tmux session: $session"
+}
+
 # Claude Code
 alias claude-api='ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY claude'
 alias claude-pro='unset ANTHROPIC_API_KEY && claude'
