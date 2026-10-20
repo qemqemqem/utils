@@ -126,6 +126,47 @@ EOF
         touch .gitignore
     fi
     
+    # Create Claude Code settings
+    echo "Creating .claude/settings.json..."
+    mkdir -p .claude
+    cat > .claude/settings.json << 'EOF'
+{
+  "permissions": {
+    "allow": [
+      "Bash(find .)",
+      "Bash(find . *)",
+      "Bash(cd *)",
+      "Bash(ls *)",
+      "Bash(pwd)",
+      "Bash(tree *)",
+      "Bash(grep *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git branch *)",
+      "Bash(npm *)",
+      "Bash(pip *)",
+      "Bash(python *)",
+      "Bash(pytest *)",
+      "Bash(make *)",
+      "Read",
+      "Edit",
+      "Glob"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(sudo *)",
+      "Bash(curl *)",
+      "Bash(wget *)"
+    ]
+  }
+}
+EOF
+    
     # Initial commit
     echo "Making initial commit..."
     git add . || return 1
